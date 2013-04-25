@@ -1,0 +1,18 @@
+﻿<!-- @@SiteHelpers.MakeNote("My test note content.") -->
+@helper MakeNote(string content) {
+  <div class="note" 
+       style="border: 1px solid black; width: 90%; padding: 5px; margin-left: 15px;">
+    <p>
+      <strong>Note</strong>&nbsp;&nbsp; @content
+    </p>
+  </div>
+}
+
+<!-- @@SiteHelpers.OrderedList(new[] { "Blue", "Red", "Green" }) -->
+@helper OrderedList(IEnumerable<string> items){
+  <ol>
+    @foreach ( var item in items ) {
+      <li>@item</li>
+    }
+  </ol>
+}

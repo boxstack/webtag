@@ -1,0 +1,86 @@
+﻿@{
+  Page.Title = "Add Item";  
+
+  Validation.RequireField( "tag", "You must specify the tag" );
+  Validation.Add( "tag", Validator.Integer() );
+  Validation.RequireField( "desc", "You must provide a description" );
+  Validation.RequireField( "serno", "You must provide the serial number" );
+  Validation.RequireField( "model", "You must provide the model" );
+  Validation.Add( "appdate", Validator.DateTime() );
+
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+
+  if ( IsPost && Validation.IsValid() ) {
+    tag = Request.Form["tag"];
+    po = Request.Form["po"];
+    desc = Request.Form["desc"];
+    serno = Request.Form["serno"];
+    model = Request.Form["model"];
+    appby = Request.Form["appby"];
+    appdate = Request.Form["appdate"];
+
+    var db = Database.Open( "WebPagesTags" );
+    var insertCommand = "INSERT INTO " +
+                        "Items (Tag, PONumber, Description, SerialNumber, Model, AppliedBy, AppliedByDate) " +
+                        "VALUES (@0, @1, @2, @3, @4, @5, @6)";
+
+    db.Execute( insertCommand, tag, po, desc, serno, model, appby, appdate );
+
+    Response.Redirect( "~/Items" );
+  }
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Add an Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <p><label for="tag">Tag:</label>
+           <input type="text" name="tag" value="@Request.Form["tag"]" />
+           @Html.ValidationMessage( "tag" )
+        </p>
+
+        <p><label for="po">PO Number:</label>
+           <input type="text" name="po" value="@Request.Form["po"]" />
+        </p>
+
+        <p><label for="desc">Description:</label>
+           <input type="text" name="desc" value="@Request.Form["desc"]" />
+           @Html.ValidationMessage( "desc" )
+        </p>
+
+        <p><label for="serno">Serial Number:</label>
+           <input type="text" name="serno" value="@Request.Form["serno"]" />
+           @Html.ValidationMessage( "serno" )
+        </p>
+
+        <p><label for="model">Model:</label>
+           <input type="text" name="model" value="@Request.Form["model"]" />
+           @Html.ValidationMessage( "model")
+        </p>
+
+        <p><label for="appby">Tag Applied By:</label>
+           <input type="text" name="appby" value="@Request.Form["appby"]" />
+        </p>
+
+        <p><label for="appdate">Date Applied:</label>
+           <input type="text" name="appdate" value="@Request.Form["appdate"]" />
+           @Html.ValidationMessage( "appdate" )
+        </p>
+
+        <p><input type="submit" name="buttonSubmit" value="Add Item" /></p>
+      </fieldset>
+    </form>

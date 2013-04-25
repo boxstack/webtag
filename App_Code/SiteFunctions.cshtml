@@ -1,0 +1,12 @@
+﻿@functions {    
+    public static bool IsBeforeToday(string value) {
+       DateTime result;
+       if (DateTime.TryParse(value.ToString(), out result) ) {
+          if (result < DateTime.Now) {
+             return true;
+          }
+       }
+       return false;
+    }
+}
+

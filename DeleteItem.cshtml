@@ -1,0 +1,98 @@
+﻿@{
+  Page.Title = "Delete Item"; 
+      
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+
+  if(IsPost) {
+    if ( !Request["buttonDelete"].IsEmpty() ){
+        id = Request.Form["id"];
+        var db = Database.Open( "WebPagesTags" );
+        var deleteCommand = "DELETE FROM Items WHERE ID = @0";
+        db.Execute( deleteCommand, id );
+        Response.Redirect( "~/Items" );
+    }
+  } else {
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+      id = Request.QueryString["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+      var row = db.QuerySingle( dbCommand, id );
+
+      if ( row != null ) {
+        tag = row.Tag;
+        po = row.PONumber;
+        desc = row.Description;
+        serno = row.SerialNumber;
+        model = row.Model;
+        appby = row.AppliedBy;
+        appdate = row.AppliedByDate.ToString();
+      } else {
+        Validation.AddFormError("No Item was found for that ID.");
+      }
+    } else {
+      Validation.AddFormError("No Item was found for that ID.");
+    }
+  }    
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Delete an Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <p>
+          <span>Tag:</span>
+          <span>@tag</span>
+        </p>
+
+        <p>
+          <span>PO Number:</span>
+          <span>@po</span>
+        </p>
+
+        <p>
+          <span>Description:</span>
+          <span>@desc</span>
+        </p>
+
+        <p>
+          <span>Serial Number:</span>
+          <span>@serno</span>
+        </p>
+
+        <p>
+          <span>Model:</span>
+          <span>@model</span>
+        </p>
+
+        <p>
+          <span>Applied By:</span>
+          <span>@appby</span>
+        </p>
+
+        <p>
+          <span>Date Applied:</span>
+          <span>@appdate</span>
+        </p>
+
+        <input type="hidden" name="id" value="@id" />
+
+        <p>
+          <input type="submit" name="buttonDelete" value="Delete Item" />
+        </p>
+      </fieldset>
+    </form>

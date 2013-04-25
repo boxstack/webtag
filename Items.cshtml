@@ -1,0 +1,75 @@
+﻿@{
+  Page.Title = "List Items";    
+
+  var db = Database.Open( "WebPagesTags" );
+  var selectCommand = "SELECT * FROM Items WHERE DisposeDate IS NULL";
+  var searchTerm = "";
+
+  if ( !Request.QueryString["tag"].IsEmpty() ) {
+    selectCommand = "SELECT * FROM Items WHERE Tag = @0";
+    searchTerm = Request.QueryString["tag"];
+  }
+
+  if ( !Request.QueryString["serno"].IsEmpty() ) {
+    selectCommand = "SELECT * FROM Items WHERE SerialNumber = @0";
+    searchTerm = Request.QueryString["serno"];
+  }
+
+  if ( !Request.QueryString["desc"].IsEmpty() ) {
+    selectCommand = "SELECT * FROM Items WHERE Description LIKE @0";
+    searchTerm = "%" + Request["desc"] + "%";
+  }
+
+  var selectedData = db.Query( selectCommand, searchTerm );
+  var grid = new WebGrid( source: selectedData, defaultSort: "Tag", rowsPerPage: 20 );
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>List Items</h2>
+    <div>
+      <h4>Leave search fields blank to list all items</h4>
+    </div>
+    <form method="get">
+      <div>
+        <label for="tag">Tag search:</label>
+        <input type="text" name="tag" value="@Request.QueryString["tag"]" />
+        <input type="Submit" value="Search Tags" /><br/>
+        <br/>
+      </div>
+    </form>
+    <form method="get">
+      <div>
+        <label for="serno">Serial Number lookup:</label>
+        <input type="text" name="serno" value="@Request.QueryString["serno"]" />
+        <input type="Submit" value="Search Serial Numbers" /><br/>
+        <br />
+      </div>
+    </form>
+    <form method="get">
+      <div>
+        <label for="desc">Item description contains the following:</label>
+        <input type="text" name="desc" value="@Request.QueryString["desc"]" />
+        <input type="Submit" value="Search Descriptions" /><br/>
+        <br />
+      </div>
+    </form>
+    <div>
+      @grid.GetHtml(
+        tableStyle: "grid",
+        headerStyle: "head",
+        alternatingRowStyle: "alt",
+        columns: grid.Columns(
+          grid.Column(format: @<a href="~/EditItem?id=@item.ID">Edit</a>),
+          grid.Column("Tag"),
+          grid.Column("PONumber"),
+          grid.Column("Description"),
+          grid.Column("SerialNumber"),
+          grid.Column("Model"),
+          grid.Column(format: @<a href="~/DisposeItem?id=@item.ID">Dispose</a>)
+        )
+      )
+    </div>        
+    <p>
+      <a href="~/AddItem">Add an Item</a>
+    </p>

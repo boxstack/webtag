@@ -1,0 +1,30 @@
+﻿@using Microsoft.Web.Helpers;
+
+@{
+  Page.Title = "Upload File";
+
+  var fileName = "";
+
+  if (IsPost) {
+    var fileSavePath = "";
+    var uploadedFile = Request.Files[0];
+    fileName = Path.GetFileName(uploadedFile.FileName);
+    fileSavePath = Server.MapPath("~/App_Data/upload/" + fileName);
+    uploadedFile.SaveAs(fileSavePath);
+  }
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>FileUpload - Single-File Example</h2>
+
+    @FileUpload.GetHtml(
+       initialNumberOfFiles:1,
+       allowMoreFilesToBeAdded:false,
+       includeFormTag:true,
+       uploadText:"Upload"
+    )
+
+    @if (IsPost) {
+        <span>File uploaded!</span><br/>
+    }

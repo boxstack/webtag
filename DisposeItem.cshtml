@@ -1,0 +1,163 @@
+﻿@{
+  Page.Title = "Dispose Item"; 
+      
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+  var dispdate = "";
+  var dispby = "";
+  var comments = "";
+
+  Boolean disposed = false;
+
+  if(IsPost) {
+    Validation.RequireField( "dispdate", "You must provide a date" );
+    Validation.Add( "dispdate", Validator.DateTime() );
+    Validation.RequireField( "dispby", "You must identify someone" );
+
+    id = Request.Form["id"];
+    tag = Request.Form["tag"];
+    po = Request.Form["po"];
+    desc = Request.Form["desc"];
+    serno = Request.Form["serno"];
+    model = Request.Form["model"];
+    appby = Request.Form["appby"];
+    appdate = Request.Form["appdate"];
+    dispdate = Request.Form["dispdate"];
+    dispby = Request.Form["dispby"];
+    comments = Request.Form["comments"];
+
+    if ( !Request["buttonDispose"].IsEmpty() && Validation.IsValid() ) {
+      id = Request.Form["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var updateCommand = "UPDATE Items SET " +
+                          "DisposeDate=@0, DisposeBy=@1, Comments=@2 " +
+                          "WHERE ID=@3";
+      db.Execute( updateCommand, dispdate, dispby, comments, id );
+      Response.Redirect( "~/Items" );
+    } else if ( !Request["buttonRestore"].IsEmpty() ) {
+      id = Request.Form["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var updateCommand = "UPDATE Items SET " +
+                          "DisposeDate=NULL, DisposeBy=NULL, Comments=NULL " +
+                          "WHERE ID=@0";
+      db.Execute( updateCommand, id );
+      Response.Redirect( "~/Items" );        
+    }
+  } else {
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+      id = Request.QueryString["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+      var row = db.QuerySingle( dbCommand, id );
+
+      if ( row != null ) {
+        tag = row.Tag;
+        po = row.PONumber;
+        desc = row.Description;
+        serno = row.SerialNumber;
+        model = row.Model;
+        appby = row.AppliedBy;
+        appdate = row.AppliedByDate.ToString();
+
+        if ( row.DisposeDate != null ) {
+          disposed = true;
+          dispdate = row.DisposeDate.ToString();
+        }
+
+        if ( disposed ) {
+          Validation.AddFormError("This Item was already disposed.");
+        }
+
+        dispby = row.DisposeBy;
+        comments = row.Comments; 
+      } else {
+        Validation.AddFormError("No Item was found for that ID.");
+      }
+    } else {
+      Validation.AddFormError("No Item was found for that ID.");
+    }
+  }    
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Dispose Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <p>
+          <span>Tag:</span>
+          <span>@tag</span>
+        </p>
+
+        <p>
+          <span>PO Number:</span>
+          <span>@po</span>
+        </p>
+
+        <p>
+          <span>Description:</span>
+          <span>@desc</span>
+        </p>
+
+        <p>
+          <span>Serial Number:</span>
+          <span>@serno</span>
+        </p>
+
+        <p>
+          <span>Model:</span>
+          <span>@model</span>
+        </p>
+
+        <p>
+          <span>Applied By:</span>
+          <span>@appby</span>
+        </p>
+
+        <p>
+          <span>Date Applied:</span>
+          <span>@appdate</span>
+        </p>
+
+        <p>
+          <label for="dispdate">Date Disposed:</label>
+          <input type="text" name="dispdate" value="@dispdate" />
+          @Html.ValidationMessage( "dispdate" )
+        </p>
+
+        <p>
+          <label for="dispby">Disposed By:</label>
+          <input type="text" name="dispby" value="@dispby" />
+          @Html.ValidationMessage( "dispby" )
+        </p>
+
+        <p>
+          <label for="comments">Comments:</label>
+          <input type="text" name="comments" value="@comments" />
+        </p>
+
+        <input type="hidden" name="id" value="@id" />
+
+        <p>
+          @if ( disposed ) {
+            <input type="submit" name="buttonDispose" value="Update" />
+            <input type="submit" name="buttonRestore" value="Restore" />              
+          } else {
+            <input type="submit" name="buttonDispose" value="Dispose" />              
+          }
+        </p>
+      </fieldset>
+    </form>

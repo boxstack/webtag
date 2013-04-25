@@ -1,0 +1,122 @@
+﻿@{
+  Page.Title = "Edit Item";
+      
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+
+  if ( IsPost ) {
+  Validation.RequireField( "tag", "You must specify the tag" );
+  Validation.Add( "tag", Validator.Integer() );
+  Validation.RequireField( "desc", "You must provide a description" );
+  Validation.RequireField( "serno", "You must provide the serial number" );
+  Validation.RequireField( "model", "You must provide the model" );
+  Validation.Add( "appdate", Validator.DateTime() );
+
+    id = Request.Form["id"];
+    tag = Request.Form["tag"];
+    po = Request.Form["po"];
+    desc = Request.Form["desc"];
+    serno = Request.Form["serno"];
+    model = Request.Form["model"];
+    appby = Request.Form["appby"];
+    appdate = Request.Form["appdate"];
+
+    if ( Validation.IsValid() ) {
+      var db = Database.Open( "WebPagesTags" );
+      var updateCommand = "UPDATE Items SET " +
+                          "Tag=@0, PONumber=@1, Description=@2, SerialNumber=@3, " +
+                          "Model=@4, AppliedBy=@5, AppliedByDate=@6 " +
+                          "WHERE ID=@7";
+      db.Execute( updateCommand, tag, po, desc, serno, model, appby, appdate, id );
+      Response.Redirect( "~/Items" );
+    }
+  } else {
+
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
+      id = Request.QueryString["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+      var row = db.QuerySingle( dbCommand, id );
+
+      if ( row != null ) {
+        tag = row.Tag;
+        po = row.PONumber;
+        desc = row.Description;
+        serno = row.SerialNumber;
+        model = row.Model;
+        appby = row.AppliedBy;
+        appdate = row.AppliedByDate.ToString();
+      } else {
+        Validation.AddFormError("No Item was found for that ID.");  
+      }
+    } else {
+       Validation.AddFormError( "No Item was selected." );
+    }
+  }    
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Edit Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <p>
+          <label for="tag">Tag:</label>
+          <input type="text" name="tag" value="@tag" />
+          @Html.ValidationMessage( "tag" )
+        </p>
+
+        <p>
+          <label for="po">PO Number:</label>
+          <input type="text" name="po" value="@po" />
+        </p>
+
+        <p>
+          <label for="desc">Description:</label>
+          <input type="text" name="desc" value="@desc" />
+          @Html.ValidationMessage( "desc" )
+        </p>
+
+        <p>
+          <label for="serno">Serial Number:</label>
+          <input type="text" name="serno" value="@serno" />
+          @Html.ValidationMessage( "serno" )
+        </p>
+
+        <p>
+          <label for="model">Model:</label>
+          <input type="text" name="model" value="@model" /> 
+          @Html.ValidationMessage( "model")
+        </p>
+
+        <p>
+          <label for="appby">Applied By:</label>
+          <input type="text" name="appby" value="@appby" />
+        </p>
+
+        <p>
+          <label for="appdate">Date Applied:</label>
+          <input type="text" name="appdate" value="@appdate" />
+          @Html.ValidationMessage( "appdate" )
+        </p>
+
+        <input type="hidden" name="id" value="@id" />
+
+        <p>
+          <input type="submit" name="buttonSubmit" value="Submit Changes" />
+        </p>
+      </fieldset>
+    </form>

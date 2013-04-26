@@ -16,7 +16,7 @@
   Boolean disposed = false;
 
   if(IsPost) {
-    Validation.RequireField( "dispdate", "You must provide a date formatted MM/DD/YYYY" );
+    Validation.RequireField( "dispdate", "Please enter date formatted MM/DD/YYYY" );
     Validation.Add( "dispdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
     Validation.RequireField( "dispby", "Name of authorized person is required" );
 

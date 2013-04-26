@@ -11,12 +11,12 @@
   var appdate = "";
 
   if ( IsPost ) {
-    Validation.RequireField( "tag", "You must specify the tag" );
+    Validation.RequireField( "tag", "Please specify the tag" );
     Validation.Add( "tag", Validator.Integer() );
-    Validation.RequireField( "desc", "You must provide a description" );
-    Validation.RequireField( "serno", "You must provide the serial number" );
-    Validation.RequireField( "model", "You must provide the model" );
-    Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format") );
+    Validation.RequireField( "desc", "An item description is required" );
+    Validation.RequireField( "serno", "Please provide the item serial number" );
+    Validation.RequireField( "model", "The item model is required" );
+    Validation.Add( "appdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY") );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -118,7 +118,7 @@
         </p>
 
         <p>
-          <label for="appby">Applied By:</label>
+          <label for="appby">Tag Applied By:</label>
           <input type="text" name="appby" value="@appby" />
         </p>
 

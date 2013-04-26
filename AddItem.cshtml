@@ -1,12 +1,12 @@
 ﻿@{
   Page.Title = "Add Item";  
 
-  Validation.RequireField( "tag", "You must specify the tag" );
+  Validation.RequireField( "tag", "Please specify the tag" );
   Validation.Add( "tag", Validator.Integer() );
-  Validation.RequireField( "desc", "You must provide a description" );
-  Validation.RequireField( "serno", "You must provide the serial number" );
-  Validation.RequireField( "model", "You must provide the model" );
-  Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format" ) );
+  Validation.RequireField( "desc", "An item description is required" );
+  Validation.RequireField( "serno", "Please provide the item serial number" );
+  Validation.RequireField( "model", "The item model is required" );
+  Validation.Add( "appdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
 
   var id = "";
   var tag = "";
@@ -42,14 +42,12 @@
                             "Items (Tag, PONumber, Description, SerialNumber, " +
                             "Model, AppliedBy, AppliedByDate) " +
                             "VALUES (@0, @1, @2, @3, @4, @5, @6)";
-
         db.Execute( insertCommand, tag, po, desc, serno, model, appby, DBNull.Value );
 
         if ( appdate.Length > 0 ) {
           var updateCommand = "UPDATE Items SET " +
                               "AppliedByDate=@0 " +
                               "WHERE Tag=@1";
-
           db.Execute( updateCommand, appdate, tag );
         }
 

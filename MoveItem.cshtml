@@ -1,0 +1,119 @@
+﻿@{
+  Page.Title = "Move Item"; 
+
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var movedate = "";
+  var location = "";
+  var assigned = "";
+
+  if(IsPost) {
+    Validation.RequireField( "movedate", "Please enter date formatted MM/DD/YYYY" );
+    Validation.Add( "movedate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
+    Validation.RequireField( "location", "Location or user name is required" );
+    Validation.RequireField( "assigned", "Trustee name is required" );
+
+    id = Request.Form["id"];
+    tag = Request.Form["tag"];
+    movedate = Request.Form["movedate"];
+    location = Request.Form["location"];
+    assigned = Request.Form["assigned"];
+
+    if ( !Request["buttonMove"].IsEmpty() && Validation.IsValid() ) {
+      id = Request.Form["id"];
+      var insertCommand = "INSERT INTO " +
+                          "Moves (ItemID, MoveDate, Location, AssignedTo) " +
+                          "VALUES (@0, @1, @2, @3)";
+      db.Execute( insertCommand, id, movedate, location, assigned );
+
+      Response.Redirect( "~/Items?tag=" + tag );
+    }
+  } else {
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+      id = Request.QueryString["id"];
+      var db = Database.Open( "WebPagesTags" );
+      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+      var item = db.QuerySingle( dbCommand, id );
+
+      if ( item != null ) {
+        tag = item.Tag;
+        po = item.PONumber;
+        desc = item.Description;
+        serno = item.SerialNumber;
+        model = item.Model;
+      } else {
+        Validation.AddFormError("No Item was found with that ID.");
+      }
+    } else {
+      Validation.AddFormError("No Item was found with that ID.");
+    }
+  }    
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Move Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <p>
+          <span class="spanlabel">Tag:</span>
+          <span class="spandata">@tag</span>
+        </p>
+
+        <p>
+          <span class="spanlabel">PO Number:</span>
+          <span class="spandata">@po</span>
+        </p>
+
+        <p>
+          <span class="spanlabel">Description:</span>
+          <span class="spandata">@desc</span>
+        </p>
+
+        <p>
+          <span class="spanlabel">Serial Number:</span>
+          <span class="spandata">@serno</span>
+        </p>
+
+        <p>
+          <span class="spanlabel">Model:</span>
+          <span class="spandata">@model</span>
+        </p>
+
+        <p>
+          <label for="dispdate">Move Date:</label>
+          <input type="text" name="movedate" value="@movedate" />
+          @Html.ValidationMessage( "movedate" )
+        </p>
+
+        <p>
+          <label for="dispby">Location:</label>
+          <input type="text" name="location" value="@location" />
+          @Html.ValidationMessage( "location" )
+        </p>
+
+        <p>
+          <label for="comments">Assigned To:</label>
+          <input type="text" name="comments" value="@assigned" />
+          @Html.ValidationMessage( "assigned" )
+        </p>
+
+        <input type="hidden" name="id" value="@id" />
+        <input type="hidden" name="tag" value="@tag" />
+
+        <p>
+          <input type="submit" name="buttonMove" value="Move Item" class="submitbutton" />
+        </p>
+      </fieldset>
+    </form>

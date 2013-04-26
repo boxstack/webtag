@@ -64,14 +64,14 @@
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
         }
       } else {
-        Validation.AddFormError("No Item was found with specified ID.");  
+        Validation.AddFormError("No Item was found with specified ID");  
       }
 
       if ( !Request.QueryString["tag"].IsEmpty() ) {
-        Validation.AddFormError( "Editing existing Item.");
+        Validation.AddFormError( "Editing existing Item");
       }
     } else {
-       Validation.AddFormError( "No Item was selected." );
+       Validation.AddFormError( "No Item was selected" );
     }
   }    
 }

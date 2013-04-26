@@ -1,0 +1,156 @@
+﻿@{
+  Page.Title = "View Item"; 
+
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+  var dispdate = "";
+  var dispby = "";
+  var comments = "";
+
+  WebGrid grid = null;
+  Boolean disposed = false;
+
+  if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+    id = Request.QueryString["id"];
+    var db = Database.Open( "WebPagesTags" );
+    var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+    var item = db.QuerySingle( dbCommand, id );
+
+    if ( item != null ) {
+      tag = item.Tag;
+      po = item.PONumber;
+      desc = item.Description;
+      serno = item.SerialNumber;
+      model = item.Model;
+      appby = item.AppliedBy;
+
+      if ( item.AppliedByDate != null ) {
+        appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
+      }
+
+      if ( item.DisposeDate != null ) {
+        disposed = true;
+        dispdate = item.DisposeDate.ToString( "MM/dd/yyyy" );
+      }
+
+      if ( disposed ) {
+        Validation.AddFormError("This Item was disposed");
+      }
+
+      dispby = item.DisposeBy;
+      comments = item.Comments;
+      
+      var selectCommand = "SELECT * FROM Moves WHERE ItemID = @0";
+      var searchTerm = Request.QueryString["id"];
+
+      var selectedData = db.Query( selectCommand, searchTerm );
+
+      if ( selectedData.Any() ) {
+        grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );  
+      }
+      
+      if ( !Request.QueryString["id"].IsEmpty() ) {
+        Response.Redirect( "~/ViewItem?id=" + Request.QueryString["id"] );       
+      } 
+    } else {
+      Validation.AddFormError("No Item was found with that ID");
+    }
+  } else {
+    Validation.AddFormError("No Item was found with that ID");
+  }
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>View Item</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/Items">Return to Items</a>
+    </p>
+
+    <form method="get">
+      <p>
+        <span class="spanlabel">Tag:</span>
+        <span class="spandata">@tag</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">PO Number:</span>
+        <span class="spandata">@po</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Description:</span>
+        <span class="spandata">@desc</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Serial Number:</span>
+        <span class="spandata">@serno</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Model:</span>
+        <span class="spandata">@model</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Tag Applied By:</span>
+        <span class="spandata">@appby</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Date Applied:</span>
+        <span class="spandata">@appdate</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Date Disposed:</span>
+        <span class="spandata">@dispdate</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Disposed By:</span>
+        <span class="spandata">@dispby</span>
+        <br />
+      </p>
+
+      <p>
+        <span class="spanlabel">Comments:</span>
+        <textarea readonly rows="4">@comments</textarea>
+        <br />
+      </p>
+ 
+      <p>
+        <input type="submit" value="Move Item" class="submitbutton" />
+      </p>     
+    </form>
+
+    @if ( grid != null ) {
+      <div>
+        @grid.GetHtml(
+          tableStyle: "grid",
+          headerStyle: "head",
+          alternatingRowStyle: "alt",
+          columns: grid.Columns(
+            grid.Column("MoveDate"),
+            grid.Column("Location"),
+            grid.Column("AssignTo", "Assigned To")
+          )
+        )
+      </div>        
+    }

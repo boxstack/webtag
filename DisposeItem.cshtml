@@ -70,16 +70,16 @@
         }
 
         if ( disposed ) {
-          Validation.AddFormError("This Item was already disposed.");
+          Validation.AddFormError("This Item was already disposed");
         }
 
         dispby = item.DisposeBy;
         comments = item.Comments; 
       } else {
-        Validation.AddFormError("No Item was found with that ID.");
+        Validation.AddFormError("No Item was found with that ID");
       }
     } else {
-      Validation.AddFormError("No Item was found with that ID.");
+      Validation.AddFormError("No Item was found with that ID");
     }
   }    
 }
@@ -122,7 +122,7 @@
         </p>
 
         <p>
-          <span class="spanlabel">Applied By:</span>
+          <span class="spanlabel">Tag Applied By:</span>
           <span class="spandata">@appby</span>
         </p>
 

@@ -16,18 +16,12 @@
   Boolean disposed = false;
 
   if(IsPost) {
-    Validation.RequireField( "dispdate", "You must provide a date" );
-    Validation.Add( "dispdate", Validator.DateTime() );
-    Validation.RequireField( "dispby", "You must identify someone" );
+    Validation.RequireField( "dispdate", "You must provide a date formatted MM/DD/YYYY" );
+    Validation.Add( "dispdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
+    Validation.RequireField( "dispby", "Name of authorized person is required" );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
-    po = Request.Form["po"];
-    desc = Request.Form["desc"];
-    serno = Request.Form["serno"];
-    model = Request.Form["model"];
-    appby = Request.Form["appby"];
-    appdate = Request.Form["appdate"];
     dispdate = Request.Form["dispdate"];
     dispby = Request.Form["dispby"];
     comments = Request.Form["comments"];
@@ -39,6 +33,7 @@
                           "DisposeDate=@0, DisposeBy=@1, Comments=@2 " +
                           "WHERE ID=@3";
       db.Execute( updateCommand, dispdate, dispby, comments, id );
+
       Response.Redirect( "~/Items" );
     } else if ( !Request["buttonRestore"].IsEmpty() ) {
       id = Request.Form["id"];
@@ -47,40 +42,44 @@
                           "DisposeDate=NULL, DisposeBy=NULL, Comments=NULL " +
                           "WHERE ID=@0";
       db.Execute( updateCommand, id );
-      Response.Redirect( "~/Items" );        
+
+      Response.Redirect( "~/Items?tag=" + tag );        
     }
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
       var db = Database.Open( "WebPagesTags" );
       var dbCommand = "SELECT * FROM Items WHERE ID = @0";
-      var row = db.QuerySingle( dbCommand, id );
+      var item = db.QuerySingle( dbCommand, id );
 
-      if ( row != null ) {
-        tag = row.Tag;
-        po = row.PONumber;
-        desc = row.Description;
-        serno = row.SerialNumber;
-        model = row.Model;
-        appby = row.AppliedBy;
-        appdate = row.AppliedByDate.ToString();
+      if ( item != null ) {
+        tag = item.Tag;
+        po = item.PONumber;
+        desc = item.Description;
+        serno = item.SerialNumber;
+        model = item.Model;
+        appby = item.AppliedBy;
 
-        if ( row.DisposeDate != null ) {
+        if ( item.AppliedByDate != null ) {
+          appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
+        }
+
+        if ( item.DisposeDate != null ) {
           disposed = true;
-          dispdate = row.DisposeDate.ToString();
+          dispdate = item.DisposeDate.ToString( "MM/dd/yyyy" );
         }
 
         if ( disposed ) {
           Validation.AddFormError("This Item was already disposed.");
         }
 
-        dispby = row.DisposeBy;
-        comments = row.Comments; 
+        dispby = item.DisposeBy;
+        comments = item.Comments; 
       } else {
-        Validation.AddFormError("No Item was found for that ID.");
+        Validation.AddFormError("No Item was found with that ID.");
       }
     } else {
-      Validation.AddFormError("No Item was found for that ID.");
+      Validation.AddFormError("No Item was found with that ID.");
     }
   }    
 }
@@ -98,38 +97,38 @@
         <legend>Item Information</legend>
 
         <p>
-          <span>Tag:</span>
-          <span>@tag</span>
+          <span class="spanlabel">Tag:</span>
+          <span class="spandata">@tag</span>
         </p>
 
         <p>
-          <span>PO Number:</span>
-          <span>@po</span>
+          <span class="spanlabel">PO Number:</span>
+          <span class="spandata">@po</span>
         </p>
 
         <p>
-          <span>Description:</span>
-          <span>@desc</span>
+          <span class="spanlabel">Description:</span>
+          <span class="spandata">@desc</span>
         </p>
 
         <p>
-          <span>Serial Number:</span>
-          <span>@serno</span>
+          <span class="spanlabel">Serial Number:</span>
+          <span class="spandata">@serno</span>
         </p>
 
         <p>
-          <span>Model:</span>
-          <span>@model</span>
+          <span class="spanlabel">Model:</span>
+          <span class="spandata">@model</span>
         </p>
 
         <p>
-          <span>Applied By:</span>
-          <span>@appby</span>
+          <span class="spanlabel">Applied By:</span>
+          <span class="spandata">@appby</span>
         </p>
 
         <p>
-          <span>Date Applied:</span>
-          <span>@appdate</span>
+          <span class="spanlabel">Date Applied:</span>
+          <span class="spandata">@appdate</span>
         </p>
 
         <p>
@@ -146,17 +145,18 @@
 
         <p>
           <label for="comments">Comments:</label>
-          <input type="text" name="comments" value="@comments" />
+          <textarea name="comments" rows="4">@comments</textarea>
         </p>
 
         <input type="hidden" name="id" value="@id" />
+        <input type="hidden" name="tag" value="@tag" />
 
         <p>
           @if ( disposed ) {
-            <input type="submit" name="buttonDispose" value="Update" />
-            <input type="submit" name="buttonRestore" value="Restore" />              
+            <input type="submit" name="buttonDispose" value="Update" class="submitbutton" />
+            <input type="submit" name="buttonRestore" value="Restore Item" />              
           } else {
-            <input type="submit" name="buttonDispose" value="Dispose" />              
+            <input type="submit" name="buttonDispose" value="Dispose" class="submitbutton" />              
           }
         </p>
       </fieldset>

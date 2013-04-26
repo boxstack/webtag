@@ -6,7 +6,7 @@
   Validation.RequireField( "desc", "You must provide a description" );
   Validation.RequireField( "serno", "You must provide the serial number" );
   Validation.RequireField( "model", "You must provide the model" );
-  Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format") );
+  Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format" ) );
 
   var id = "";
   var tag = "";
@@ -104,6 +104,6 @@
            @Html.ValidationMessage( "appdate" )
         </p>
 
-        <p><input type="submit" value="Add Item" /></p>
+        <p><input type="submit" value="Add Item" class="submitbutton" /></p>
       </fieldset>
     </form>

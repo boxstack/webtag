@@ -1,4 +1,4 @@
-html { height:100%; margin:0; padding:0; }
+html { height: 100%; margin: 0; padding: 0; }
 
 body {
     height: 60%;
@@ -8,8 +8,8 @@ body {
     line-height: 1.6em;
 }
 
-h1 { font-size:1.6em; }
-h2 { font-size:1.4em; }
+h1 { font-size: 1.6em; }
+h2 { font-size: 1.4em; }
 
 #container {
     min-height: 100%;
@@ -39,6 +39,47 @@ h2 { font-size:1.4em; }
     padding: 8px;
     margin-top: -2em;
     background-color: LightGray;
+}
+
+label {
+    float: left;
+    width: 120px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 180px;
+    margin-bottom: 5px;
+}
+
+textarea {
+    width: 250px;
+    height: 150px;
+}
+
+.boxes {
+    width: 1em;
+}
+
+.submitbutton {
+    margin-left: 120px;
+    margin-top: 5px;
+    width: 90px;
+}
+
+.spanlabel {
+    float: left;
+    width: 120px;
+    font-weight: bold;        
+}
+.spandata {
+    width: 180px; 
+    margin-bottom: 5px;
+}
+
+
+br {
+    clear: left;
 }
 
 .head { background-color: #E8E8E8; font-weight: bold; color: #FFF; }

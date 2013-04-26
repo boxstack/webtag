@@ -1,9 +1,9 @@
 ﻿@{
-  Page.Title = "List Items";    
+  Page.Title = "Items";    
 
-  var db = Database.Open( "WebPagesTags" );
-  var selectCommand = "SELECT * FROM Items WHERE DisposeDate IS NULL";
+  var selectCommand = "";
   var searchTerm = "";
+  WebGrid grid = null;
 
   if ( !Request.QueryString["tag"].IsEmpty() ) {
     selectCommand = "SELECT * FROM Items WHERE Tag = @0";
@@ -20,15 +20,23 @@
     searchTerm = "%" + Request["desc"] + "%";
   }
 
-  var selectedData = db.Query( selectCommand, searchTerm );
-  var grid = new WebGrid( source: selectedData, defaultSort: "Tag", rowsPerPage: 20 );
+  if ( selectCommand.Length > 0 ) {
+    var db = Database.Open( "WebPagesTags" );
+    var selectedData = db.Query( selectCommand, searchTerm );
+
+    if ( selectedData.Any() ) {
+      grid = new WebGrid( source: selectedData, defaultSort: "Tag", rowsPerPage: 10 );  
+    } else if ( !Request.QueryString["tag"].IsEmpty() ) {
+      Response.Redirect( "~/AddItem?tag=" + Request.QueryString["tag"] );       
+    }
+  }
 }
 
 <!-- <html> from layout -->
   <!-- <body> from layout -->
-    <h2>List Items</h2>
+    <h2>Items</h2>
     <div>
-      <h4>Leave search fields blank to list all items</h4>
+      <h4>Use the search tools below:</h4>
     </div>
     <form method="get">
       <div>
@@ -54,22 +62,26 @@
         <br />
       </div>
     </form>
-    <div>
-      @grid.GetHtml(
-        tableStyle: "grid",
-        headerStyle: "head",
-        alternatingRowStyle: "alt",
-        columns: grid.Columns(
-          grid.Column(format: @<a href="~/EditItem?id=@item.ID">Edit</a>),
-          grid.Column("Tag"),
-          grid.Column("PONumber"),
-          grid.Column("Description"),
-          grid.Column("SerialNumber"),
-          grid.Column("Model"),
-          grid.Column(format: @<a href="~/DisposeItem?id=@item.ID">Dispose</a>)
+
+    @if ( grid != null ) {
+      <div>
+        @grid.GetHtml(
+          tableStyle: "grid",
+          headerStyle: "head",
+          alternatingRowStyle: "alt",
+          columns: grid.Columns(
+            grid.Column(format: @<a href="~/EditItem?id=@item.ID">Edit</a>),
+            grid.Column("Tag"),
+            grid.Column("PONumber"),
+            grid.Column("Description"),
+            grid.Column("SerialNumber"),
+            grid.Column("Model"),
+            grid.Column(format: @<a href="~/DisposeItem?id=@item.ID">Dispose</a>)
+          )
         )
-      )
-    </div>        
+      </div>        
+    }
+
     <p>
       <a href="~/AddItem">Add an Item</a>
     </p>

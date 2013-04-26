@@ -11,12 +11,12 @@
   var appdate = "";
 
   if ( IsPost ) {
-  Validation.RequireField( "tag", "You must specify the tag" );
-  Validation.Add( "tag", Validator.Integer() );
-  Validation.RequireField( "desc", "You must provide a description" );
-  Validation.RequireField( "serno", "You must provide the serial number" );
-  Validation.RequireField( "model", "You must provide the model" );
-  Validation.Add( "appdate", Validator.DateTime() );
+    Validation.RequireField( "tag", "You must specify the tag" );
+    Validation.Add( "tag", Validator.Integer() );
+    Validation.RequireField( "desc", "You must provide a description" );
+    Validation.RequireField( "serno", "You must provide the serial number" );
+    Validation.RequireField( "model", "You must provide the model" );
+    Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format") );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -33,27 +33,42 @@
                           "Tag=@0, PONumber=@1, Description=@2, SerialNumber=@3, " +
                           "Model=@4, AppliedBy=@5, AppliedByDate=@6 " +
                           "WHERE ID=@7";
-      db.Execute( updateCommand, tag, po, desc, serno, model, appby, appdate, id );
-      Response.Redirect( "~/Items" );
+      db.Execute( updateCommand, tag, po, desc, serno, model, appby, DBNull.Value, id );
+
+      if ( appdate.Length > 0 ) {
+        updateCommand = "UPDATE Items SET " +
+                        "AppliedByDate=@0 " +
+                        "WHERE ID=@1";
+
+        db.Execute( updateCommand, appdate, id );
+      }
+
+      Response.Redirect( "~/Items?tag=" + tag );
     }
   } else {
-
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
       id = Request.QueryString["id"];
       var db = Database.Open( "WebPagesTags" );
-      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
-      var row = db.QuerySingle( dbCommand, id );
+      var selectCommand = "SELECT * FROM Items WHERE ID = @0";
+      var item = db.QuerySingle( selectCommand, id );
 
-      if ( row != null ) {
-        tag = row.Tag;
-        po = row.PONumber;
-        desc = row.Description;
-        serno = row.SerialNumber;
-        model = row.Model;
-        appby = row.AppliedBy;
-        appdate = row.AppliedByDate.ToString();
+      if ( item != null ) {
+        tag = item.Tag;
+        po = item.PONumber;
+        desc = item.Description;
+        serno = item.SerialNumber;
+        model = item.Model;
+        appby = item.AppliedBy;
+
+        if ( item.AppliedByDate != null ) {
+          appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
+        }
       } else {
-        Validation.AddFormError("No Item was found for that ID.");  
+        Validation.AddFormError("No Item was found with specified ID.");  
+      }
+
+      if ( !Request.QueryString["tag"].IsEmpty() ) {
+        Validation.AddFormError( "Editing existing Item.");
       }
     } else {
        Validation.AddFormError( "No Item was selected." );

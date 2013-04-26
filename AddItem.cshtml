@@ -6,8 +6,9 @@
   Validation.RequireField( "desc", "You must provide a description" );
   Validation.RequireField( "serno", "You must provide the serial number" );
   Validation.RequireField( "model", "You must provide the model" );
-  Validation.Add( "appdate", Validator.DateTime() );
+  Validation.Add( "appdate", Validator.DateTime( "Use MM/DD/YYYY format") );
 
+  var id = "";
   var tag = "";
   var po = "";
   var desc = "";
@@ -16,23 +17,45 @@
   var appby = "";
   var appdate = "";
 
-  if ( IsPost && Validation.IsValid() ) {
+  if ( !Request.QueryString["tag"].IsEmpty() ) {
+    tag = Request.QueryString["tag"];
+  }
+
+  if ( IsPost ) {
     tag = Request.Form["tag"];
     po = Request.Form["po"];
     desc = Request.Form["desc"];
     serno = Request.Form["serno"];
     model = Request.Form["model"];
     appby = Request.Form["appby"];
-    appdate = Request.Form["appdate"];
+    appdate = Request.Form["appdate"];      
 
-    var db = Database.Open( "WebPagesTags" );
-    var insertCommand = "INSERT INTO " +
-                        "Items (Tag, PONumber, Description, SerialNumber, Model, AppliedBy, AppliedByDate) " +
-                        "VALUES (@0, @1, @2, @3, @4, @5, @6)";
+    if ( Validation.IsValid() ) {
+      var db = Database.Open( "WebPagesTags" );
+      var selectCommand = "SELECT * FROM Items WHERE Tag = @0";
+      var existingItem = db.QuerySingle( selectCommand, tag );
 
-    db.Execute( insertCommand, tag, po, desc, serno, model, appby, appdate );
+      if ( existingItem != null ) {
+        Response.Redirect( "~/EditItem?id=" + existingItem.ID + "&tag=" + tag );        
+      } else {
+        var insertCommand = "INSERT INTO " +
+                            "Items (Tag, PONumber, Description, SerialNumber, " +
+                            "Model, AppliedBy, AppliedByDate) " +
+                            "VALUES (@0, @1, @2, @3, @4, @5, @6)";
 
-    Response.Redirect( "~/Items" );
+        db.Execute( insertCommand, tag, po, desc, serno, model, appby, DBNull.Value );
+
+        if ( appdate.Length > 0 ) {
+          var updateCommand = "UPDATE Items SET " +
+                              "AppliedByDate=@0 " +
+                              "WHERE Tag=@1";
+
+          db.Execute( updateCommand, appdate, tag );
+        }
+
+        Response.Redirect( "~/Items?tag=" + tag );
+      }
+    }
   }
 }
 
@@ -49,38 +72,38 @@
         <legend>Item Information</legend>
 
         <p><label for="tag">Tag:</label>
-           <input type="text" name="tag" value="@Request.Form["tag"]" />
+           <input type="text" name="tag" value="@tag" />
            @Html.ValidationMessage( "tag" )
         </p>
 
         <p><label for="po">PO Number:</label>
-           <input type="text" name="po" value="@Request.Form["po"]" />
+           <input type="text" name="po" value="@po" />
         </p>
 
         <p><label for="desc">Description:</label>
-           <input type="text" name="desc" value="@Request.Form["desc"]" />
+           <input type="text" name="desc" value="@desc" />
            @Html.ValidationMessage( "desc" )
         </p>
 
         <p><label for="serno">Serial Number:</label>
-           <input type="text" name="serno" value="@Request.Form["serno"]" />
+           <input type="text" name="serno" value="@serno" />
            @Html.ValidationMessage( "serno" )
         </p>
 
         <p><label for="model">Model:</label>
-           <input type="text" name="model" value="@Request.Form["model"]" />
+           <input type="text" name="model" value="@model" />
            @Html.ValidationMessage( "model")
         </p>
 
         <p><label for="appby">Tag Applied By:</label>
-           <input type="text" name="appby" value="@Request.Form["appby"]" />
+           <input type="text" name="appby" value="@appby" />
         </p>
 
         <p><label for="appdate">Date Applied:</label>
-           <input type="text" name="appdate" value="@Request.Form["appdate"]" />
+           <input type="text" name="appdate" value="@appdate" />
            @Html.ValidationMessage( "appdate" )
         </p>
 
-        <p><input type="submit" name="buttonSubmit" value="Add Item" /></p>
+        <p><input type="submit" value="Add Item" /></p>
       </fieldset>
     </form>

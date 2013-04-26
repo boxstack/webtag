@@ -52,11 +52,6 @@ input, textarea {
     margin-bottom: 5px;
 }
 
-textarea {
-    width: 250px;
-    height: 150px;
-}
-
 .boxes {
     width: 1em;
 }

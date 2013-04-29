@@ -1,6 +1,7 @@
 ﻿@{
   Page.Title = "Delete Move"; 
-      
+
+  string appDatabaseName = App.appDatabaseName;    
   var id = "";
   var tag = "";
   var po = "";
@@ -20,7 +21,7 @@
     moveid = Request.Form["moveid"];
 
     if ( !Request["buttonDelete"].IsEmpty() && Validation.IsValid() ) {
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var deleteCommand = "DELETE FROM Moves " +
                            "WHERE ID=@0";
       db.Execute( deleteCommand, moveid );
@@ -31,7 +32,7 @@
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
 
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
       var item = db.QuerySingle( selectItemCommand, id );
 

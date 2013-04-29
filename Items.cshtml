@@ -1,6 +1,7 @@
 ﻿@{
   Page.Title = "Items";    
 
+  string appDatabaseName = App.appDatabaseName;
   var selectCommand = "";
   var searchTerm = "";
   WebGrid grid = null;
@@ -21,7 +22,7 @@
   }
 
   if ( selectCommand.Length > 0 ) {
-    var db = Database.Open( "WebPagesTags" );
+    var db = Database.Open( appDatabaseName );
     var selectedData = db.Query( selectCommand, searchTerm );
 
     if ( selectedData.Any() ) {

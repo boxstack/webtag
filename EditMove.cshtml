@@ -1,6 +1,7 @@
 ﻿@{
   Page.Title = "Edit Move"; 
-      
+
+  string appDatabaseName = App.appDatabaseName;      
   var id = "";
   var tag = "";
   var po = "";
@@ -28,7 +29,7 @@
     assigned = Request.Form["assigned"];
 
     if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var updateCommand = "UPDATE Moves SET " +
                           "MoveDate=@0, Location=@1, AssignedTo=@2 " +
                           "WHERE ID=@3";
@@ -40,7 +41,7 @@
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
 
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
       var item = db.QuerySingle( selectItemCommand, id );
 

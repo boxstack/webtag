@@ -1,6 +1,7 @@
 ﻿@{
   Page.Title = "Dispose Item"; 
-      
+
+  string appDatabaseName = App.appDatabaseName;      
   var id = "";
   var tag = "";
   var po = "";
@@ -28,7 +29,7 @@
 
     if ( !Request["buttonDispose"].IsEmpty() && Validation.IsValid() ) {
       id = Request.Form["id"];
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var updateCommand = "UPDATE Items SET " +
                           "DisposeDate=@0, DisposeBy=@1, Comments=@2 " +
                           "WHERE ID=@3";
@@ -48,7 +49,7 @@
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var dbCommand = "SELECT * FROM Items WHERE ID = @0";
       var item = db.QuerySingle( dbCommand, id );
 

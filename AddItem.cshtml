@@ -1,13 +1,8 @@
 ﻿@{
   Page.Title = "Add Item";  
 
-  Validation.RequireField( "tag", "Please specify the tag" );
-  Validation.Add( "tag", Validator.Integer() );
-  Validation.RequireField( "desc", "An item description is required" );
-  Validation.RequireField( "serno", "Please provide the item serial number" );
-  Validation.RequireField( "model", "The item model is required" );
-  Validation.Add( "appdate", Validator.DateTime( "If provided, date must be formatted MM/DD/YYYY" ) );
 
+  string appDatabaseName = App.appDatabaseName;
   var id = "";
   var tag = "";
   var po = "";
@@ -22,6 +17,13 @@
   }
 
   if ( IsPost ) {
+    Validation.RequireField( "tag", "Please specify the tag" );
+    Validation.Add( "tag", Validator.Integer() );
+    Validation.RequireField( "desc", "An item description is required" );
+    Validation.RequireField( "serno", "Please provide the item serial number" );
+    Validation.RequireField( "model", "The item model is required" );
+    Validation.Add( "appdate", Validator.DateTime( "If provided, date must be formatted MM/DD/YYYY" ) );
+
     tag = Request.Form["tag"];
     po = Request.Form["po"];
     desc = Request.Form["desc"];
@@ -31,7 +33,7 @@
     appdate = Request.Form["appdate"];      
 
     if ( Validation.IsValid() ) {
-      var db = Database.Open( "WebPagesTags" );
+      var db = Database.Open( appDatabaseName );
       var selectCommand = "SELECT * FROM Items WHERE Tag = @0";
       var existingItem = db.QuerySingle( selectCommand, tag );
 

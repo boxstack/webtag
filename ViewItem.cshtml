@@ -133,7 +133,9 @@
           headerStyle: "head",
           alternatingRowStyle: "alt",
           columns: grid.Columns(
-            grid.Column("MoveDate", "Moved"),
+            grid.Column("MoveDate", "Moved",
+              format: (item) => string.Format("{0:MM/dd/yyyy}", item.MoveDate)
+            ),
             grid.Column("Location"),
             grid.Column("AssignedTo", "Assigned To")
           )

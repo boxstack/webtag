@@ -176,7 +176,9 @@
           alternatingRowStyle: "alt",
           columns: grid.Columns(
             grid.Column(format: @<a href="~/EditMove?id=@id&moveid=@item.ID">Edit</a>),
-            grid.Column("MoveDate", "Moved"),
+            grid.Column("MoveDate", "Moved",
+              format: (item) => string.Format("{0:MM/dd/yyyy}", item.MoveDate)
+            ),
             grid.Column("Location"),
             grid.Column("AssignedTo", "Assigned To"),
             grid.Column(format: @<a href="~/DeleteMove?id=@id&moveid=@item.ID">Delete</a>)

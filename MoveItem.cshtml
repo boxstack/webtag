@@ -19,22 +19,30 @@
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
+    po = Request.Form["po"];
+    desc = Request.Form["desc"];
+    serno = Request.Form["serno"];
+    model = Request.Form["model"];
+
     movedate = Request.Form["movedate"];
     location = Request.Form["location"];
     assigned = Request.Form["assigned"];
 
     if ( !Request["buttonMove"].IsEmpty() && Validation.IsValid() ) {
       id = Request.Form["id"];
+      
+      var db = Database.Open( "WebPagesTags" );
       var insertCommand = "INSERT INTO " +
                           "Moves (ItemID, MoveDate, Location, AssignedTo) " +
                           "VALUES (@0, @1, @2, @3)";
       db.Execute( insertCommand, id, movedate, location, assigned );
 
-      Response.Redirect( "~/Items?tag=" + tag );
+      Response.Redirect( "~/ViewItem?id=" + id );
     }
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
+
       var db = Database.Open( "WebPagesTags" );
       var dbCommand = "SELECT * FROM Items WHERE ID = @0";
       var item = db.QuerySingle( dbCommand, id );
@@ -69,26 +77,31 @@
         <p>
           <span class="spanlabel">Tag:</span>
           <span class="spandata">@tag</span>
+          <br />
         </p>
 
         <p>
           <span class="spanlabel">PO Number:</span>
           <span class="spandata">@po</span>
+          <br />
         </p>
 
         <p>
           <span class="spanlabel">Description:</span>
           <span class="spandata">@desc</span>
+          <br />
         </p>
 
         <p>
           <span class="spanlabel">Serial Number:</span>
           <span class="spandata">@serno</span>
+          <br />
         </p>
 
         <p>
           <span class="spanlabel">Model:</span>
           <span class="spandata">@model</span>
+          <br />
         </p>
 
         <p>
@@ -105,7 +118,7 @@
 
         <p>
           <label for="comments">Assigned To:</label>
-          <input type="text" name="comments" value="@assigned" />
+          <input type="text" name="assigned" value="@assigned" />
           @Html.ValidationMessage( "assigned" )
         </p>
 

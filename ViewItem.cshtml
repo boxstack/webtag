@@ -53,11 +53,7 @@
 
       if ( selectedData.Any() ) {
         grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );  
-      }
-      
-      if ( !Request.QueryString["id"].IsEmpty() ) {
-        Response.Redirect( "~/ViewItem?id=" + Request.QueryString["id"] );       
-      } 
+      }     
     } else {
       Validation.AddFormError("No Item was found with that ID");
     }
@@ -134,11 +130,11 @@
         <textarea readonly rows="4">@comments</textarea>
         <br />
       </p>
- 
-      <p>
-        <input type="submit" value="Move Item" class="submitbutton" />
-      </p>     
     </form>
+
+    <p>
+      <a href="~/MoveItem?id=@id">Move Item</a>
+    </p>
 
     @if ( grid != null ) {
       <div>
@@ -147,9 +143,9 @@
           headerStyle: "head",
           alternatingRowStyle: "alt",
           columns: grid.Columns(
-            grid.Column("MoveDate"),
+            grid.Column("MoveDate", "Moved"),
             grid.Column("Location"),
-            grid.Column("AssignTo", "Assigned To")
+            grid.Column("AssignedTo", "Assigned To")
           )
         )
       </div>        

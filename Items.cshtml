@@ -25,7 +25,7 @@
     var selectedData = db.Query( selectCommand, searchTerm );
 
     if ( selectedData.Any() ) {
-      grid = new WebGrid( source: selectedData, defaultSort: "Tag", rowsPerPage: 10 );  
+      grid = new WebGrid( source: selectedData, defaultSort: "Tag", rowsPerPage: 5 );  
     } else if ( !Request.QueryString["tag"].IsEmpty() ) {
       Response.Redirect( "~/AddItem?tag=" + Request.QueryString["tag"] );       
     }

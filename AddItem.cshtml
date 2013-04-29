@@ -69,39 +69,55 @@
       <fieldset>
         <legend>Item Information</legend>
 
-        <p><label for="tag">Tag:</label>
-           <input type="text" name="tag" value="@tag" />
-           @Html.ValidationMessage( "tag" )
-        </p>
+        <div>
+          <label for="tag">Tag:</label>
+          <input type="text" name="tag" value="@tag" />
+          @Html.ValidationMessage( "tag" )
+          <br />
+        </div>
 
-        <p><label for="po">PO Number:</label>
-           <input type="text" name="po" value="@po" />
-        </p>
+        <div>
+          <label for="po">PO Number:</label>
+          <input type="text" name="po" value="@po" />
+          <br />
+        </div>
 
-        <p><label for="desc">Description:</label>
-           <input type="text" name="desc" value="@desc" />
-           @Html.ValidationMessage( "desc" )
-        </p>
+        <div>
+          <label for="desc">Description:</label>
+          <input type="text" name="desc" value="@desc" />
+          @Html.ValidationMessage( "desc" )
+          <br />
+        </div>
 
-        <p><label for="serno">Serial Number:</label>
-           <input type="text" name="serno" value="@serno" />
-           @Html.ValidationMessage( "serno" )
-        </p>
+        <div>
+          <label for="serno">Serial Number:</label>
+          <input type="text" name="serno" value="@serno" />
+          @Html.ValidationMessage( "serno" )
+          <br />
+        </div>
 
-        <p><label for="model">Model:</label>
-           <input type="text" name="model" value="@model" />
-           @Html.ValidationMessage( "model")
-        </p>
+        <div>
+          <label for="model">Model:</label>
+          <input type="text" name="model" value="@model" />
+          @Html.ValidationMessage( "model")
+          <br />
+        </div>
 
-        <p><label for="appby">Tag Applied By:</label>
-           <input type="text" name="appby" value="@appby" />
-        </p>
+        <div>
+          <label for="appby">Tag Applied By:</label>
+          <input type="text" name="appby" value="@appby" />
+          <br />
+        </div>
 
-        <p><label for="appdate">Date Applied:</label>
-           <input type="text" name="appdate" value="@appdate" />
-           @Html.ValidationMessage( "appdate" )
-        </p>
+        <div>
+          <label for="appdate">Date Applied:</label>
+          <input type="text" name="appdate" value="@appdate" />
+          @Html.ValidationMessage( "appdate" )
+          <br />
+        </div>
 
-        <p><input type="submit" value="Add Item" class="submitbutton" /></p>
+        <div>
+          <input type="submit" value="Add Item" class="submitbutton" />
+        </div>
       </fieldset>
     </form>

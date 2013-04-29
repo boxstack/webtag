@@ -1,5 +1,5 @@
 ﻿@{
-  Page.Title = "Delete Move"; 
+  Page.Title = "Edit Move"; 
       
   var id = "";
   var tag = "";
@@ -16,14 +16,23 @@
   var assigned = "";
 
   if(IsPost) {
+    Validation.RequireField( "movedate", "Please enter date formatted MM/DD/YYYY" );
+    Validation.Add( "movedate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
+    Validation.RequireField( "location", "Location or user name is required" );
+    Validation.RequireField( "assigned", "Trustee name is required" );
+
     id = Request.Form["id"];
     moveid = Request.Form["moveid"];
+    movedate = Request.Form["movedate"];
+    location = Request.Form["location"];
+    assigned = Request.Form["assigned"];
 
-    if ( !Request["buttonDelete"].IsEmpty() && Validation.IsValid() ) {
+    if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
       var db = Database.Open( "WebPagesTags" );
-      var deleteCommand = "DELETE FROM Moves " +
-                           "WHERE ID=@0";
-      db.Execute( deleteCommand, moveid );
+      var updateCommand = "UPDATE Moves SET " +
+                          "MoveDate=@0, Location=@1, AssignedTo=@2 " +
+                          "WHERE ID=@3";
+      db.Execute( updateCommand, movedate, location, assigned, moveid );
 
       Response.Redirect( "~/EditItem?id=" + id );
     }
@@ -74,7 +83,7 @@
 
 <!-- <html> from layout -->
   <!-- <body> from layout -->
-    <h2>Delete Move</h2>
+    <h2>Edit Move</h2>
     @Html.ValidationSummary()
     <p>
       <a href="~/EditItem?id=@id" >Return to Edit Item</a>
@@ -85,27 +94,30 @@
         <legend>Move Information</legend>
 
         <div>
-          <span class="spanlabel">Date Moved:</span>
-          <span class="spandata">@movedate</span>
+          <label for="movedate">Date Moved:</label>
+          <input type="text" name="movedate" value="@movedate" />
+          @Html.ValidationMessage( "movedate" )
           <br />
         </div>
 
         <div>
-          <span class="spanlabel">Location:</span>
-          <span class="spandata">@location</span>
+          <label for="location">Location:</label>
+          <input type="text" name="location" value="@location" /> 
+          @Html.ValidationMessage( "location")
           <br />
         </div>
 
         <div>
-          <span class="spanlabel">Assigned To:</span>
-          <span class="spandata">@assigned</span>
+          <label for="assigned">Assigned To:</label>
+          <input type="text" name="assigned" value="@assigned" /> 
+          @Html.ValidationMessage( "assigned")
           <br />
         </div>
 
         <input type="hidden" name="moveid" value="@moveid" />
 
         <div>
-          <input type="submit" name="buttonDelete" value="Delete" class="submitbutton" />              
+          <input type="submit" name="buttonUpdate" value="Update" class="submitbutton" />              
         </div>
       </fieldset>
 

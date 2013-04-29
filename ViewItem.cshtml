@@ -63,54 +63,57 @@
   <!-- <body> from layout -->
     <h2>View Item</h2>
     @Html.ValidationSummary()
-    <div>
+    <p>
       <a href="~/Items">Return to Items</a>
-      <br />
-    </div>
+    </p>
 
     <form method="get">
-      <div>
-        <span class="spanlabel">Tag:</span>
-        <span class="spandata">@tag</span>
-        <br />
-      </div>
+      <fieldset>
+        <legend>Item Information</legend>
 
-      <div>
-        <span class="spanlabel">PO Number:</span>
-        <span class="spandata">@po</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">Tag:</span>
+          <span class="spandata">@tag</span>
+          <br />
+        </div>
 
-      <div>
-        <span class="spanlabel">Description:</span>
-        <span class="spandata">@desc</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">PO Number:</span>
+          <span class="spandata">@po</span>
+          <br />
+        </div>
 
-      <div>
-        <span class="spanlabel">Serial Number:</span>
-        <span class="spandata">@serno</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">Description:</span>
+          <span class="spandata">@desc</span>
+          <br />
+        </div>
 
-      <div>
-        <span class="spanlabel">Model:</span>
-        <span class="spandata">@model</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">Serial Number:</span>
+          <span class="spandata">@serno</span>
+          <br />
+        </div>
 
-      <div>
-        <span class="spanlabel">Tag Applied By:</span>
-        <span class="spandata">@appby</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">Model:</span>
+          <span class="spandata">@model</span>
+          <br />
+        </div>
 
-      <div>
-        <span class="spanlabel">Date Applied:</span>
-        <span class="spandata">@appdate</span>
-        <br />
-      </div>
+        <div>
+          <span class="spanlabel">Tag Applied By:</span>
+          <span class="spandata">@appby</span>
+          <br />
+        </div>
 
+        <div>
+          <span class="spanlabel">Date Applied:</span>
+          <span class="spandata">@appdate</span>
+          <br />
+        </div>
+
+      </fieldset>
     </form>
 
     <div>

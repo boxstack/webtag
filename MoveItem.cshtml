@@ -67,66 +67,70 @@
     <h2>Move Item</h2>
     @Html.ValidationSummary()
     <p>
-      <a href="~/Items">Return to Items</a>
+      <a href="~/ViewItem?id=@id">Return to View Item</a>
     </p>
 
     <form method="post">
       <fieldset>
-        <legend>Item Information</legend>
+        <legend>Move Information</legend>
 
-        <p>
-          <span class="spanlabel">Tag:</span>
-          <span class="spandata">@tag</span>
-          <br />
-        </p>
-
-        <p>
-          <span class="spanlabel">PO Number:</span>
-          <span class="spandata">@po</span>
-          <br />
-        </p>
-
-        <p>
-          <span class="spanlabel">Description:</span>
-          <span class="spandata">@desc</span>
-          <br />
-        </p>
-
-        <p>
-          <span class="spanlabel">Serial Number:</span>
-          <span class="spandata">@serno</span>
-          <br />
-        </p>
-
-        <p>
-          <span class="spanlabel">Model:</span>
-          <span class="spandata">@model</span>
-          <br />
-        </p>
-
-        <p>
+        <div>
           <label for="dispdate">Move Date:</label>
           <input type="text" name="movedate" value="@movedate" />
           @Html.ValidationMessage( "movedate" )
-        </p>
+        </div>
 
-        <p>
+        <div>
           <label for="dispby">Location:</label>
           <input type="text" name="location" value="@location" />
           @Html.ValidationMessage( "location" )
-        </p>
+        </div>
 
-        <p>
+        <div>
           <label for="comments">Assigned To:</label>
           <input type="text" name="assigned" value="@assigned" />
           @Html.ValidationMessage( "assigned" )
-        </p>
+        </div>
+
+        <div>
+          <input type="submit" name="buttonMove" value="Move Item" class="submitbutton" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <div>
+          <span class="spanlabel">Tag:</span>
+          <span class="spandata">@tag</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">PO Number:</span>
+          <span class="spandata">@po</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Description:</span>
+          <span class="spandata">@desc</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Serial Number:</span>
+          <span class="spandata">@serno</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Model:</span>
+          <span class="spandata">@model</span>
+          <br />
+        </div>
 
         <input type="hidden" name="id" value="@id" />
-        <input type="hidden" name="tag" value="@tag" />
 
-        <p>
-          <input type="submit" name="buttonMove" value="Move Item" class="submitbutton" />
-        </p>
       </fieldset>
     </form>

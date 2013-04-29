@@ -52,7 +52,11 @@
       var selectedData = db.Query( selectCommand, searchTerm );
 
       if ( selectedData.Any() ) {
-        grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );  
+        grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );
+        
+        if (Request.QueryString[grid.SortDirectionFieldName].IsEmpty()) {
+          grid.SortDirection = SortDirection.Descending;
+        }          
       }     
     } else {
       Validation.AddFormError("No Item was found with that ID");

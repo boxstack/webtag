@@ -10,6 +10,9 @@
   var appby = "";
   var appdate = "";
 
+  WebGrid grid = null;
+  Boolean disposed = false;
+
   if ( IsPost ) {
     Validation.RequireField( "tag", "Please specify the tag" );
     Validation.Add( "tag", Validator.Integer() );
@@ -49,8 +52,8 @@
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
       id = Request.QueryString["id"];
       var db = Database.Open( "WebPagesTags" );
-      var selectCommand = "SELECT * FROM Items WHERE ID = @0";
-      var item = db.QuerySingle( selectCommand, id );
+      var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
+      var item = db.QuerySingle( selectItemCommand, id );
 
       if ( item != null ) {
         tag = item.Tag;
@@ -63,6 +66,28 @@
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
         }
+
+        if ( item.DisposeDate != null ) {
+          disposed = true;
+        }
+
+        if ( disposed ) {
+          Validation.AddFormError("This Item was disposed");
+        }
+
+        var selectMovesCommand = "SELECT * FROM Moves WHERE ItemID = @0";
+        var searchTerm = Request.QueryString["id"];
+
+        var selectedData = db.Query( selectMovesCommand, searchTerm );
+
+        if ( selectedData.Any() ) {
+          grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );
+        
+          if (Request.QueryString[grid.SortDirectionFieldName].IsEmpty()) {
+            grid.SortDirection = SortDirection.Descending;
+          }          
+        }     
+
       } else {
         Validation.AddFormError("No Item was found with specified ID");  
       }
@@ -135,3 +160,20 @@
         </p>
       </fieldset>
     </form>
+
+    @if ( grid != null ) {
+      <div>
+        @grid.GetHtml(
+          tableStyle: "grid",
+          headerStyle: "head",
+          alternatingRowStyle: "alt",
+          columns: grid.Columns(
+            grid.Column(format: @<a href="~/EditMove?id=@item.ID">Edit</a>),
+            grid.Column("MoveDate", "Moved"),
+            grid.Column("Location"),
+            grid.Column("AssignedTo", "Assigned To"),
+            grid.Column(format: @<a href="~/DeleteMove?id=@item.ID">Delete</a>)
+          )
+        )
+      </div>        
+    }

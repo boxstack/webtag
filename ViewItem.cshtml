@@ -63,62 +63,65 @@
   <!-- <body> from layout -->
     <h2>View Item</h2>
     @Html.ValidationSummary()
-    <p>
+    <div>
       <a href="~/Items">Return to Items</a>
-    </p>
+      <br />
+    </div>
 
     <form method="get">
-      <p>
+      <div>
         <span class="spanlabel">Tag:</span>
         <span class="spandata">@tag</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">PO Number:</span>
         <span class="spandata">@po</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">Description:</span>
         <span class="spandata">@desc</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">Serial Number:</span>
         <span class="spandata">@serno</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">Model:</span>
         <span class="spandata">@model</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">Tag Applied By:</span>
         <span class="spandata">@appby</span>
         <br />
-      </p>
+      </div>
 
-      <p>
+      <div>
         <span class="spanlabel">Date Applied:</span>
         <span class="spandata">@appdate</span>
         <br />
-      </p>
+      </div>
 
     </form>
 
-    <p>
+    <div>
       <a href="~/MoveItem?id=@id">Move Item</a>
-    </p>
+      <br />
+    </div>
 
-    <p>
+    <div>
       <a href="~/EditItem?id=@id">Edit Item</a>
-    </p>
+      <br />
+    </div>
 
     @if ( grid != null ) {
       <div>

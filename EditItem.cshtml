@@ -113,51 +113,58 @@
       <fieldset>
         <legend>Item Information</legend>
 
-        <p>
+        <div>
           <label for="tag">Tag:</label>
           <input type="text" name="tag" value="@tag" />
           @Html.ValidationMessage( "tag" )
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="po">PO Number:</label>
           <input type="text" name="po" value="@po" />
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="desc">Description:</label>
           <input type="text" name="desc" value="@desc" />
           @Html.ValidationMessage( "desc" )
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="serno">Serial Number:</label>
           <input type="text" name="serno" value="@serno" />
           @Html.ValidationMessage( "serno" )
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="model">Model:</label>
           <input type="text" name="model" value="@model" /> 
           @Html.ValidationMessage( "model")
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="appby">Tag Applied By:</label>
           <input type="text" name="appby" value="@appby" />
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="appdate">Date Applied:</label>
           <input type="text" name="appdate" value="@appdate" />
           @Html.ValidationMessage( "appdate" )
-        </p>
+          <br />
+        </div>
 
         <input type="hidden" name="id" value="@id" />
 
-        <p>
+        <div>
           <input type="submit" name="buttonSubmit" value="Update" class="submitbutton" />
-        </p>
+        </div>
       </fieldset>
     </form>
 
@@ -168,11 +175,11 @@
           headerStyle: "head",
           alternatingRowStyle: "alt",
           columns: grid.Columns(
-            grid.Column(format: @<a href="~/EditMove?id=@item.ID">Edit</a>),
+            grid.Column(format: @<a href="~/EditMove?id=@id&moveid=@item.ID">Edit</a>),
             grid.Column("MoveDate", "Moved"),
             grid.Column("Location"),
             grid.Column("AssignedTo", "Assigned To"),
-            grid.Column(format: @<a href="~/DeleteMove?id=@item.ID">Delete</a>)
+            grid.Column(format: @<a href="~/DeleteMove?id=@id&moveid=@item.ID">Delete</a>)
           )
         )
       </div>        

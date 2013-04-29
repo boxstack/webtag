@@ -96,68 +96,78 @@
       <fieldset>
         <legend>Item Information</legend>
 
-        <p>
+        <div>
           <span class="spanlabel">Tag:</span>
           <span class="spandata">@tag</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">PO Number:</span>
           <span class="spandata">@po</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">Description:</span>
           <span class="spandata">@desc</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">Serial Number:</span>
           <span class="spandata">@serno</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">Model:</span>
           <span class="spandata">@model</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">Tag Applied By:</span>
           <span class="spandata">@appby</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span class="spanlabel">Date Applied:</span>
           <span class="spandata">@appdate</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="dispdate">Date Disposed:</label>
           <input type="text" name="dispdate" value="@dispdate" />
           @Html.ValidationMessage( "dispdate" )
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="dispby">Disposed By:</label>
           <input type="text" name="dispby" value="@dispby" />
           @Html.ValidationMessage( "dispby" )
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <label for="comments">Comments:</label>
           <textarea name="comments" rows="4">@comments</textarea>
-        </p>
+          <br />
+        </div>
 
         <input type="hidden" name="id" value="@id" />
         <input type="hidden" name="tag" value="@tag" />
 
-        <p>
+        <div>
           @if ( disposed ) {
             <input type="submit" name="buttonDispose" value="Update" class="submitbutton" />
             <input type="submit" name="buttonRestore" value="Restore Item" />              
           } else {
             <input type="submit" name="buttonDispose" value="Dispose" class="submitbutton" />              
           }
-        </p>
+        </div>
       </fieldset>
     </form>

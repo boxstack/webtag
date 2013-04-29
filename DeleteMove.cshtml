@@ -1,0 +1,158 @@
+﻿@{
+  Page.Title = "Delete Move"; 
+      
+  var id = "";
+  var tag = "";
+  var po = "";
+  var desc = "";
+  var serno = "";
+  var model = "";
+  var appby = "";
+  var appdate = "";
+
+  var moveid = "";
+  var movedate = "";
+  var location = "";
+  var assigned = "";
+
+  if(IsPost) {
+    id = Request.Form["id"];
+    moveid = Request.Form["moveid"];
+
+    if ( !Request["buttonDelete"].IsEmpty() && Validation.IsValid() ) {
+      var db = Database.Open( "WebPagesTags" );
+      var deleteCommand = "DELETE FROM Moves " +
+                           "WHERE ID=@0";
+      db.Execute( deleteCommand, moveid );
+
+      Response.Redirect( "~/EditItem?id=" + id );
+    }
+  } else {
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+      id = Request.QueryString["id"];
+
+      var db = Database.Open( "WebPagesTags" );
+      var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
+      var item = db.QuerySingle( selectItemCommand, id );
+
+      if ( item != null ) {
+        tag = item.Tag;
+        po = item.PONumber;
+        desc = item.Description;
+        serno = item.SerialNumber;
+        model = item.Model;
+        appby = item.AppliedBy;
+
+        if ( item.AppliedByDate != null ) {
+          appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
+        }
+
+        if ( !Request.QueryString["moveid"].IsEmpty() && Request.QueryString["moveid"].IsInt() ) {
+          moveid = Request.QueryString["moveid"];
+
+          var selectMoveCommand = "SELECT * from Moves WHERE ID = @0";
+          var move = db.QuerySingle( selectMoveCommand, moveid );
+
+          if ( move != null ) {
+            movedate = move.MoveDate.ToString( "MM/dd/yyyy" );
+            location = move.Location;
+            assigned = move.AssignedTo;
+          } else {
+            Validation.AddFormError( "No Move was found with that ID");          
+          }
+        } else {
+          Validation.AddFormError( "No Move was found with that ID");
+        }
+      } else {
+        Validation.AddFormError("No Item was found with that ID");
+      }
+    } else {
+      Validation.AddFormError("No Item was found with that ID");
+    }
+  }    
+}
+
+<!-- <html> from layout -->
+  <!-- <body> from layout -->
+    <h2>Delete Move</h2>
+    @Html.ValidationSummary()
+    <p>
+      <a href="~/EditItem?id=@id" >Return to Edit Item</a>
+    </p>
+
+    <form method="post">
+      <fieldset>
+        <legend>Move Information</legend>
+
+        <div>
+          <span class="spanlabel">Date Moved:</span>
+          <span class="spandata">@movedate</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Location:</span>
+          <span class="spandata">@location</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Assigned To:</span>
+          <span class="spandata">@assigned</span>
+          <br />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Item Information</legend>
+
+        <div>
+          <span class="spanlabel">Tag:</span>
+          <span class="spandata">@tag</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">PO Number:</span>
+          <span class="spandata">@po</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Description:</span>
+          <span class="spandata">@desc</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Serial Number:</span>
+          <span class="spandata">@serno</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Model:</span>
+          <span class="spandata">@model</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Tag Applied By:</span>
+          <span class="spandata">@appby</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Date Applied:</span>
+          <span class="spandata">@appdate</span>
+          <br />
+        </div>
+
+        <input type="hidden" name="id" value="@id" />
+        <input type="hidden" name="moveid" value="@moveid" />
+
+        <div>
+          <input type="submit" name="buttonDelete" value="Delete" class="submitbutton" />              
+        </div>
+      </fieldset>
+    </form>

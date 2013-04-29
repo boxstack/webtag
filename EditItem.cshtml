@@ -19,7 +19,7 @@
     Validation.RequireField( "desc", "An item description is required" );
     Validation.RequireField( "serno", "Please provide the item serial number" );
     Validation.RequireField( "model", "The item model is required" );
-    Validation.Add( "appdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY") );
+    Validation.Add( "appdate", Validator.DateTime( "If provided, date must be formatted MM/DD/YYYY") );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -30,7 +30,7 @@
     appby = Request.Form["appby"];
     appdate = Request.Form["appdate"];
 
-    if ( Validation.IsValid() ) {
+    if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
       var db = Database.Open( "WebPagesTags" );
       var updateCommand = "UPDATE Items SET " +
                           "Tag=@0, PONumber=@1, Description=@2, SerialNumber=@3, " +
@@ -163,7 +163,7 @@
         <input type="hidden" name="id" value="@id" />
 
         <div>
-          <input type="submit" name="buttonSubmit" value="Update" class="submitbutton" />
+          <input type="submit" name="buttonUpdate" value="Update" class="submitbutton" />
         </div>
       </fieldset>
     </form>

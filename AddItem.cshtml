@@ -17,12 +17,22 @@
   }
 
   if ( IsPost ) {
-    Validation.RequireField( "tag", "Please specify the tag" );
-    Validation.Add( "tag", Validator.Integer() );
-    Validation.RequireField( "desc", "An item description is required" );
-    Validation.RequireField( "serno", "Please provide the item serial number" );
-    Validation.RequireField( "model", "The item model is required" );
-    Validation.Add( "appdate", Validator.DateTime( "If provided, date must be formatted MM/DD/YYYY" ) );
+    Validation.Add( "tag",
+      Validator.Required("Please specify the tag"),
+      Validator.Regex( @"^\d{4}$", "Tag must be four (4) digits")
+    );
+    Validation.Add( "desc",
+      Validator.Required( "An item description is required" )
+    );
+    Validation.Add( "serno",
+      Validator.Required( "Please provide the item serial number" )
+    );
+    Validation.Add( "model",
+      Validator.Required( "The item model is required" )
+    );
+    Validation.Add( "appdate",
+      Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
+    );
 
     tag = Request.Form["tag"];
     po = Request.Form["po"];
@@ -73,7 +83,7 @@
 
         <div>
           <label for="tag">Tag:</label>
-          <input type="text" name="tag" value="@tag" />
+          <input type="text" name="tag" value="@tag" @Validation.For("tag") />
           @Html.ValidationMessage( "tag" )
           <br />
         </div>
@@ -86,21 +96,21 @@
 
         <div>
           <label for="desc">Description:</label>
-          <input type="text" name="desc" value="@desc" />
+          <input type="text" name="desc" value="@desc" @Validation.For("desc") />
           @Html.ValidationMessage( "desc" )
           <br />
         </div>
 
         <div>
           <label for="serno">Serial Number:</label>
-          <input type="text" name="serno" value="@serno" />
+          <input type="text" name="serno" value="@serno" @Validation.For("serno")  />
           @Html.ValidationMessage( "serno" )
           <br />
         </div>
 
         <div>
           <label for="model">Model:</label>
-          <input type="text" name="model" value="@model" />
+          <input type="text" name="model" value="@model" @Validation.For("model") />
           @Html.ValidationMessage( "model")
           <br />
         </div>
@@ -113,7 +123,7 @@
 
         <div>
           <label for="appdate">Date Applied:</label>
-          <input type="text" name="appdate" value="@appdate" />
+          <input type="text" name="appdate" value="@appdate" @Validation.For("appdate") />
           @Html.ValidationMessage( "appdate" )
           <br />
         </div>

@@ -17,9 +17,13 @@
   Boolean disposed = false;
 
   if(IsPost) {
-    Validation.RequireField( "dispdate", "Please enter date formatted MM/DD/YYYY" );
-    Validation.Add( "dispdate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
-    Validation.RequireField( "dispby", "Name of authorized person is required" );
+    Validation.Add( "dispdate",
+      Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
+      Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
+    );
+    Validation.Add( "dispby",
+      Validator.Required( "Name of authorized person is required" )
+    );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -141,14 +145,14 @@
 
         <div>
           <label for="dispdate">Date Disposed:</label>
-          <input type="text" name="dispdate" value="@dispdate" />
+          <input type="text" name="dispdate" value="@dispdate" @Validation.For("dispdate") />
           @Html.ValidationMessage( "dispdate" )
           <br />
         </div>
 
         <div>
           <label for="dispby">Disposed By:</label>
-          <input type="text" name="dispby" value="@dispby" />
+          <input type="text" name="dispby" value="@dispby" @Validation.For("dispby") />
           @Html.ValidationMessage( "dispby" )
           <br />
         </div>

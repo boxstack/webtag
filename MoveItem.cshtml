@@ -13,10 +13,16 @@
   var assigned = "";
 
   if(IsPost) {
-    Validation.RequireField( "movedate", "Please enter date formatted MM/DD/YYYY" );
-    Validation.Add( "movedate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
-    Validation.RequireField( "location", "Location or user name is required" );
-    Validation.RequireField( "assigned", "Trustee name is required" );
+    Validation.Add( "movedate",
+      Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
+      Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
+    );
+    Validation.Add( "location",
+      Validator.Required( "Location or user name is required" )
+    );
+    Validation.Add( "assigned",
+      Validator.Required( "Trustee name is required" )
+    );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -43,6 +49,7 @@
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
+      movedate = DateTime.Now.ToString( "MM/dd/yyyy" );
 
       var db = Database.Open( appDatabaseName );
       var dbCommand = "SELECT * FROM Items WHERE ID = @0";
@@ -77,19 +84,19 @@
 
         <div>
           <label for="dispdate">Move Date:</label>
-          <input type="text" name="movedate" value="@movedate" />
+          <input type="text" name="movedate" value="@movedate" @Validation.For("movedate") />
           @Html.ValidationMessage( "movedate" )
         </div>
 
         <div>
           <label for="dispby">Location:</label>
-          <input type="text" name="location" value="@location" />
+          <input type="text" name="location" value="@location" @Validation.For("location") />
           @Html.ValidationMessage( "location" )
         </div>
 
         <div>
           <label for="comments">Assigned To:</label>
-          <input type="text" name="assigned" value="@assigned" />
+          <input type="text" name="assigned" value="@assigned" @Validation.For("assigned") />
           @Html.ValidationMessage( "assigned" )
         </div>
 

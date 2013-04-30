@@ -16,11 +16,17 @@
   var location = "";
   var assigned = "";
 
-  if(IsPost) {
-    Validation.RequireField( "movedate", "Please enter date formatted MM/DD/YYYY" );
-    Validation.Add( "movedate", Validator.DateTime( "Date must be formatted MM/DD/YYYY" ) );
-    Validation.RequireField( "location", "Location or user name is required" );
-    Validation.RequireField( "assigned", "Trustee name is required" );
+  if(IsPost) {   
+    Validation.Add( "movedate",
+      Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
+      Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
+    );
+    Validation.Add( "location",
+      Validator.Required( "Location or user name is required" )
+    );
+    Validation.Add( "assigned",
+      Validator.Required( "Trustee name is required" )
+    );
 
     id = Request.Form["id"];
     moveid = Request.Form["moveid"];
@@ -96,21 +102,21 @@
 
         <div>
           <label for="movedate">Date Moved:</label>
-          <input type="text" name="movedate" value="@movedate" />
+          <input type="text" name="movedate" value="@movedate" @Validation.For("movedate") />
           @Html.ValidationMessage( "movedate" )
           <br />
         </div>
 
         <div>
           <label for="location">Location:</label>
-          <input type="text" name="location" value="@location" /> 
+          <input type="text" name="location" value="@location" @Validation.For("location") /> 
           @Html.ValidationMessage( "location")
           <br />
         </div>
 
         <div>
           <label for="assigned">Assigned To:</label>
-          <input type="text" name="assigned" value="@assigned" /> 
+          <input type="text" name="assigned" value="@assigned" @Validation.For("assigned") /> 
           @Html.ValidationMessage( "assigned")
           <br />
         </div>

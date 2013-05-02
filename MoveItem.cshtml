@@ -44,6 +44,15 @@
                           "VALUES (@0, @1, @2, @3)";
       db.Execute( insertCommand, id, movedate, location, assigned );
 
+      string msgBody = "";
+
+@*
+      MailHelper.SendMailMessage( "inventory@miami.k12.oh.us",
+                                  "inventory@miami.k12.oh.us",
+                                  "", "",
+                                  "Inventory Move Notice",
+                                  @msgBody );
+*@
       Response.Redirect( "~/ViewItem?id=" + id );
     }
   } else {

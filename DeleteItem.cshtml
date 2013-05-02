@@ -10,6 +10,7 @@
   var model = "";
   var appby = "";
   var appdate = "";
+  var cost = "";
 
   if(IsPost) {
     if ( !Request["buttonDelete"].IsEmpty() ){
@@ -36,6 +37,7 @@
         serno = item.SerialNumber;
         model = item.Model;
         appby = item.AppliedBy;
+        cost = item.Cost;
 
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
@@ -61,45 +63,58 @@
       <fieldset>
         <legend>Item Information</legend>
 
-        <p>
+        <div>
           <span>Tag:</span>
           <span>@tag</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span>PO Number:</span>
           <span>@po</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
+          <span>Cost:</span>
+          <span>@cost</span>
+          <br />
+        </div>
+
+        <div>
           <span>Description:</span>
           <span>@desc</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span>Serial Number:</span>
           <span>@serno</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span>Model:</span>
           <span>@model</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span>Applied By:</span>
           <span>@appby</span>
-        </p>
+          <br />
+        </div>
 
-        <p>
+        <div>
           <span>Date Applied:</span>
           <span>@appdate</span>
-        </p>
+          <br />
+        </div>
 
         <input type="hidden" name="id" value="@id" />
 
-        <p>
+        <div>
           <input type="submit" name="buttonDelete" value="Delete Item" />
-        </p>
+        </div>
       </fieldset>
     </form>

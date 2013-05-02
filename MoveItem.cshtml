@@ -8,6 +8,7 @@
   var desc = "";
   var serno = "";
   var model = "";
+  var cost = "";
   var movedate = "";
   var location = "";
   var assigned = "";
@@ -30,6 +31,7 @@
     desc = Request.Form["desc"];
     serno = Request.Form["serno"];
     model = Request.Form["model"];
+    cost = Request.Form["cost"];
 
     movedate = Request.Form["movedate"];
     location = Request.Form["location"];
@@ -70,6 +72,7 @@
         desc = item.Description;
         serno = item.SerialNumber;
         model = item.Model;
+        cost = item.Cost;
       } else {
         Validation.AddFormError("No Item was found with that ID.");
       }
@@ -130,6 +133,12 @@
         </div>
 
         <div>
+          <span class="spanlabel">Cost:</span>
+          <span class="spandata">@cost</span>
+          <br />
+        </div>
+
+        <div>
           <span class="spanlabel">Description:</span>
           <span class="spandata">@desc</span>
           <br />
@@ -148,6 +157,5 @@
         </div>
 
         <input type="hidden" name="id" value="@id" />
-
       </fieldset>
     </form>

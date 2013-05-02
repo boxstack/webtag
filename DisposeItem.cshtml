@@ -9,6 +9,7 @@
   var serno = "";
   var model = "";
   var appby = "";
+  var cost = "";
   var appdate = "";
   var dispdate = "";
   var dispby = "";
@@ -64,6 +65,7 @@
         serno = item.SerialNumber;
         model = item.Model;
         appby = item.AppliedBy;
+        cost = item.Cost;
 
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
@@ -94,7 +96,7 @@
     <h2>Dispose Item</h2>
     @Html.ValidationSummary()
     <p>
-      <a href="~/Items">Return to Items</a>
+      <a href="~/Items?tag=@tag">Return to Items</a>
     </p>
 
     <form method="post">
@@ -110,6 +112,12 @@
         <div>
           <span class="spanlabel">PO Number:</span>
           <span class="spandata">@po</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Cost:</span>
+          <span class="spandata">@cost</span>
           <br />
         </div>
 

@@ -10,14 +10,15 @@
   var model = "";
   var appby = "";
   var appdate = "";
+  var cost = "";
 
   WebGrid grid = null;
   Boolean disposed = false;
 
   if ( IsPost ) {    
     Validation.Add( "tag",
-      Validator.Required("Please specify the tag"),
-      Validator.Regex( @"^\d{4}$", "Tag must be four (4) digits")
+      Validator.Required( "Please specify the tag" ),
+      Validator.Regex( @"^\d{4}$", "Tag must be four (4) digits" )
     );
     Validation.Add( "desc",
       Validator.Required( "An item description is required" )
@@ -31,6 +32,9 @@
     Validation.Add( "appdate",
       Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
     );
+    Validation.Add( "cost",
+      Validator.Decimal( "If provided, cost must be decimal" )
+    );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -40,14 +44,15 @@
     model = Request.Form["model"];
     appby = Request.Form["appby"];
     appdate = Request.Form["appdate"];
+    cost = Request.Form["cost"];
 
     if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
       var db = Database.Open( appDatabaseName );
       var updateCommand = "UPDATE Items SET " +
                           "Tag=@0, PONumber=@1, Description=@2, SerialNumber=@3, " +
-                          "Model=@4, AppliedBy=@5, AppliedByDate=@6 " +
-                          "WHERE ID=@7";
-      db.Execute( updateCommand, tag, po, desc, serno, model, appby, DBNull.Value, id );
+                          "Model=@4, AppliedBy=@5, AppliedByDate=@6, Cost=@7 " +
+                          "WHERE ID=@8";
+      db.Execute( updateCommand, tag, po, desc, serno, model, appby, DBNull.Value, cost, id );
 
       if ( appdate.Length > 0 ) {
         updateCommand = "UPDATE Items SET " +
@@ -73,6 +78,7 @@
         serno = item.SerialNumber;
         model = item.Model;
         appby = item.AppliedBy;
+        cost = item.Cost;
 
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
@@ -134,6 +140,13 @@
         <div>
           <label for="po">PO Number:</label>
           <input type="text" name="po" value="@po" />
+          <br />
+        </div>
+
+        <div>
+          <label for="cost">Cost:</label>
+          <input type="text" name="cost" value="@cost" @Validation.For("cost") />
+          @Html.ValidationMessage( "cost" )
           <br />
         </div>
 

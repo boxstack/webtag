@@ -12,6 +12,7 @@
   var appby = "";
   var appdate = "";
   var cost = "";
+  var acquired = "";
 
   if ( !Request.QueryString["tag"].IsEmpty() ) {
     tag = Request.QueryString["tag"];
@@ -37,6 +38,9 @@
     Validation.Add( "cost",
       Validator.Decimal( "If provided, cost must be decimal" )
     );
+    Validation.Add( "acquired",
+      Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
+    );
 
     tag = Request.Form["tag"];
     po = Request.Form["po"];
@@ -45,9 +49,10 @@
     model = Request.Form["model"];
     appby = Request.Form["appby"];
     appdate = Request.Form["appdate"];  
-    cost = Request.Form["cost"];    
+    cost = Request.Form["cost"];
+    acquired = Request.Form["acquired"];
 
-    if ( Validation.IsValid() ) {
+    if ( !Request["buttonAdd"].IsEmpty() && Validation.IsValid() ) {
       var db = Database.Open( appDatabaseName );
       var selectCommand = "SELECT * FROM Items WHERE Tag = @0";
       var existingItem = db.QuerySingle( selectCommand, tag );
@@ -57,14 +62,23 @@
       } else {
         var insertCommand = "INSERT INTO " +
                             "Items (Tag, PONumber, Description, SerialNumber, " +
-                            "Model, AppliedBy, AppliedByDate, Cost) " +
-                            "VALUES (@0, @1, @2, @3, @4, @5, @6, @7)";
-        db.Execute( insertCommand, tag, po, desc, serno, model, appby, DBNull.Value, cost );
+                            "Model, AppliedBy, Cost) " +
+                            "VALUES (@0, @1, @2, @3, @4, @5, @6)";
+        db.Execute( insertCommand, tag, po, desc, serno, model, appby, cost );
+
+        var updateCommand = "";
+
+        if ( acquired.Length > 0 ) {
+          updateCommand = "UPDATE Items SET " +
+                          "Acquired=@0 " +
+                          "WHERE Tag=@1";
+          db.Execute( updateCommand, acquired, tag );
+        }
 
         if ( appdate.Length > 0 ) {
-          var updateCommand = "UPDATE Items SET " +
-                              "AppliedByDate=@0 " +
-                              "WHERE Tag=@1";
+          updateCommand = "UPDATE Items SET " +
+                          "AppliedByDate=@0 " +
+                          "WHERE Tag=@1";
           db.Execute( updateCommand, appdate, tag );
         }
 
@@ -107,6 +121,13 @@
         </div>
 
         <div>
+          <label for="acquired">Acquired:</label>
+          <input type="text" name="acquired" value="@acquired" @Validation.For("acquired") />
+          @Html.ValidationMessage( "acquired" )
+          <br />
+        </div>
+
+        <div>
           <label for="desc">Description:</label>
           <input type="text" name="desc" value="@desc" @Validation.For("desc") />
           @Html.ValidationMessage( "desc" )
@@ -141,7 +162,7 @@
         </div>
 
         <div>
-          <input type="submit" value="Add Item" class="submitbutton" />
+          <input type="submit" name="buttonAdd" value="Add Item" class="submitbutton" />
         </div>
       </fieldset>
     </form>

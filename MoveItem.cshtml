@@ -9,11 +9,12 @@
   var serno = "";
   var model = "";
   var cost = "";
+  var acquired = "";
   var movedate = "";
   var location = "";
   var assigned = "";
 
-  if(IsPost) {
+  if( IsPost ) {
     Validation.Add( "movedate",
       Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
       Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
@@ -26,12 +27,6 @@
     );
 
     id = Request.Form["id"];
-    tag = Request.Form["tag"];
-    po = Request.Form["po"];
-    desc = Request.Form["desc"];
-    serno = Request.Form["serno"];
-    model = Request.Form["model"];
-    cost = Request.Form["cost"];
 
     movedate = Request.Form["movedate"];
     location = Request.Form["location"];
@@ -56,9 +51,26 @@
                                   @msgBody );
 *@
       Response.Redirect( "~/ViewItem?id=" + id );
+    } else {
+      var db = Database.Open( appDatabaseName );
+      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+      var item = db.QuerySingle( dbCommand, id );
+
+      if ( item != null ) {
+        tag = item.Tag;
+        po = item.PONumber;
+        desc = item.Description;
+        serno = item.SerialNumber;
+        model = item.Model;
+        cost = item.Cost;
+
+        if ( item.Acquired != null ) {
+          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
+        }
+      }        
     }
   } else {
-    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
+    if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
       id = Request.QueryString["id"];
       movedate = DateTime.Now.ToString( "MM/dd/yyyy" );
 
@@ -73,11 +85,15 @@
         serno = item.SerialNumber;
         model = item.Model;
         cost = item.Cost;
+
+        if ( item.Acquired != null ) {
+          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
+        }
       } else {
-        Validation.AddFormError("No Item was found with that ID.");
+        Validation.AddFormError( "No Item was found with that ID." );
       }
     } else {
-      Validation.AddFormError("No Item was found with that ID.");
+      Validation.AddFormError( "No Item was found with that ID." );
     }
   }    
 }
@@ -135,6 +151,12 @@
         <div>
           <span class="spanlabel">Cost:</span>
           <span class="spandata">@cost</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Acquired:</span>
+          <span class="spandata">@acquired</span>
           <br />
         </div>
 

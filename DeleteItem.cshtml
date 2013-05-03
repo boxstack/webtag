@@ -11,6 +11,7 @@
   var appby = "";
   var appdate = "";
   var cost = "";
+  var acquired = "";
 
   if(IsPost) {
     if ( !Request["buttonDelete"].IsEmpty() ){
@@ -38,6 +39,10 @@
         model = item.Model;
         appby = item.AppliedBy;
         cost = item.Cost;
+
+        if ( item.Acquired != null ) {
+          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
+        }
 
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
@@ -78,6 +83,12 @@
         <div>
           <span>Cost:</span>
           <span>@cost</span>
+          <br />
+        </div>
+
+        <div>
+          <span>Acquired:</span>
+          <span>@acquired</span>
           <br />
         </div>
 

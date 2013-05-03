@@ -11,6 +11,7 @@
   var appby = "";
   var appdate = "";
   var cost = "";
+  var acquired = "";
 
   WebGrid grid = null;
   Boolean disposed = false;
@@ -30,6 +31,10 @@
       appby = item.AppliedBy;
       cost = item.Cost;
 
+      if ( item.Acquired != null ) {
+        acquired = item.Acquired.ToString( "MM/dd/yyyy" );          
+      }
+
       if ( item.AppliedByDate != null ) {
         appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
       }
@@ -39,7 +44,7 @@
       }
 
       if ( disposed ) {
-        Validation.AddFormError("This Item was disposed");
+        Validation.AddFormError( "This Item was disposed" );
       }
       
       var selectCommand = "SELECT * FROM Moves WHERE ItemID = @0";
@@ -50,15 +55,15 @@
       if ( selectedData.Any() ) {
         grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );
         
-        if (Request.QueryString[grid.SortDirectionFieldName].IsEmpty()) {
+        if ( Request.QueryString[grid.SortDirectionFieldName].IsEmpty() ) {
           grid.SortDirection = SortDirection.Descending;
         }          
       }     
     } else {
-      Validation.AddFormError("No Item was found with that ID");
+      Validation.AddFormError( "No Item was found with that ID" );
     }
   } else {
-    Validation.AddFormError("No Item was found with that ID");
+    Validation.AddFormError( "No Item was found with that ID" );
   }
 }
 
@@ -89,6 +94,12 @@
         <div>
           <span class="spanlabel">Cost:</span>
           <span class="spandata">@cost</span>
+          <br />
+        </div>
+
+        <div>
+          <span class="spanlabel">Acquired:</span>
+          <span class="spandata">@acquired</span>
           <br />
         </div>
 
@@ -142,11 +153,12 @@
           headerStyle: "head",
           alternatingRowStyle: "alt",
           columns: grid.Columns(
-            grid.Column("MoveDate", "Moved",
-              format: (item) => string.Format("{0:MM/dd/yyyy}", item.MoveDate)
+            grid.Column( "MoveDate", "Moved",
+              format: (item) => item.MoveDate == null ?
+                string.Empty : string.Format( "{0:MM/dd/yyyy}", item.MoveDate )
             ),
-            grid.Column("Location"),
-            grid.Column("AssignedTo", "Assigned To")
+            grid.Column( "Location" ),
+            grid.Column( "AssignedTo", "Assigned To" )
           )
         )
       </div>        

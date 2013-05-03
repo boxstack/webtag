@@ -11,6 +11,7 @@
   var appby = "";
   var appdate = "";
   var cost = "";
+  var acquired = "";
 
   WebGrid grid = null;
   Boolean disposed = false;
@@ -35,6 +36,9 @@
     Validation.Add( "cost",
       Validator.Decimal( "If provided, cost must be decimal" )
     );
+    Validation.Add( "acquired",
+      Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
+    );
 
     id = Request.Form["id"];
     tag = Request.Form["tag"];
@@ -45,24 +49,31 @@
     appby = Request.Form["appby"];
     appdate = Request.Form["appdate"];
     cost = Request.Form["cost"];
+    acquired = Request.Form["acquired"];
 
     if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
       var db = Database.Open( appDatabaseName );
       var updateCommand = "UPDATE Items SET " +
                           "Tag=@0, PONumber=@1, Description=@2, SerialNumber=@3, " +
-                          "Model=@4, AppliedBy=@5, AppliedByDate=@6, Cost=@7 " +
-                          "WHERE ID=@8";
-      db.Execute( updateCommand, tag, po, desc, serno, model, appby, DBNull.Value, cost, id );
+                          "Model=@4, AppliedBy=@5, Cost=@6, Acquired=NULL, AppliedByDate=NULL " +
+                          "WHERE ID=@7";
+      db.Execute( updateCommand, tag, po, desc, serno, model, appby, cost, id );
+
+      if ( acquired.Length > 0 ) {
+        updateCommand = "UPDATE Items SET " +
+                        "Acquired=@0 " +
+                        "WHERE Tag=@1";
+        db.Execute( updateCommand, acquired, tag );
+      }
 
       if ( appdate.Length > 0 ) {
         updateCommand = "UPDATE Items SET " +
                         "AppliedByDate=@0 " +
                         "WHERE ID=@1";
-
         db.Execute( updateCommand, appdate, id );
       }
 
-      Response.Redirect( "~/Items?tag=" + tag );
+      Response.Redirect( "~/ViewItem?id=" + id );
     }
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
@@ -80,6 +91,10 @@
         appby = item.AppliedBy;
         cost = item.Cost;
 
+        if ( item.Acquired != null ) {
+          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
+        }
+
         if ( item.AppliedByDate != null ) {
           appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );
         }
@@ -89,7 +104,7 @@
         }
 
         if ( disposed ) {
-          Validation.AddFormError("This Item was disposed");
+          Validation.AddFormError( "This Item was disposed" );
         }
 
         var selectMovesCommand = "SELECT * FROM Moves WHERE ItemID = @0";
@@ -100,17 +115,17 @@
         if ( selectedData.Any() ) {
           grid = new WebGrid( source: selectedData, defaultSort: "MoveDate", rowsPerPage: 4 );
         
-          if (Request.QueryString[grid.SortDirectionFieldName].IsEmpty()) {
+          if ( Request.QueryString[grid.SortDirectionFieldName].IsEmpty() ) {
             grid.SortDirection = SortDirection.Descending;
           }          
         }     
 
       } else {
-        Validation.AddFormError("No Item was found with specified ID");  
+        Validation.AddFormError( "No Item was found with specified ID" );  
       }
 
       if ( !Request.QueryString["tag"].IsEmpty() ) {
-        Validation.AddFormError( "Editing existing Item");
+        Validation.AddFormError( "Editing existing Item" );
       }
     } else {
        Validation.AddFormError( "No Item was selected" );
@@ -147,6 +162,13 @@
           <label for="cost">Cost:</label>
           <input type="text" name="cost" value="@cost" @Validation.For("cost") />
           @Html.ValidationMessage( "cost" )
+          <br />
+        </div>
+
+        <div>
+          <label for="acquired">Acquired:</label>
+          <input type="text" name="acquired" value="@acquired" @Validation.For("acquired") />
+          @Html.ValidationMessage( "acquired" )
           <br />
         </div>
 
@@ -200,8 +222,9 @@
           alternatingRowStyle: "alt",
           columns: grid.Columns(
             grid.Column(format: @<a href="~/EditMove?id=@id&moveid=@item.ID">Edit</a>),
-            grid.Column("MoveDate", "Moved",
-              format: (item) => string.Format("{0:MM/dd/yyyy}", item.MoveDate)
+            grid.Column( "MoveDate", "Moved",
+              format: (item) => item.MoveDate == null ?
+                string.Empty : string.Format( "{0:MM/dd/yyyy}", item.MoveDate )
             ),
             grid.Column("Location"),
             grid.Column("AssignedTo", "Assigned To"),

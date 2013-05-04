@@ -18,106 +18,86 @@
   var location = "";
   var assigned = "";
 
-  if(IsPost) {   
-    Validation.Add( "movedate",
-      Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
-      Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
-    );
-    Validation.Add( "location",
-      Validator.Required( "Location or user name is required" )
-    );
-    Validation.Add( "assigned",
-      Validator.Required( "Trustee name is required" )
-    );
+  var db = Database.Open( appDatabaseName );
 
+  Validation.Add( "movedate",
+    Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
+    Validator.Regex( "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2}|[0-9]{4})$" ),
+    Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
+  );
+  Validation.Add( "location",
+    Validator.Required( "Location or user name is required" )
+  );
+  Validation.Add( "assigned",
+    Validator.Required( "Trustee name is required" )
+  );
+
+  if( IsPost ) {   
     id = Request.Form["id"];
+
     moveid = Request.Form["moveid"];
     movedate = Request.Form["movedate"];
     location = Request.Form["location"];
     assigned = Request.Form["assigned"];
 
     if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
-      var db = Database.Open( appDatabaseName );
       var updateCommand = "UPDATE Moves SET " +
                           "MoveDate=@0, Location=@1, AssignedTo=@2 " +
                           "WHERE ID=@3";
       db.Execute( updateCommand, movedate, location, assigned, moveid );
 
       Response.Redirect( "~/EditItem?id=" + id );
-    } else {
-      var db = Database.Open( appDatabaseName );
-      var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
-      var item = db.QuerySingle( selectItemCommand, id );
-
-      if ( item != null ) {
-        tag = item.Tag;
-        po = item.PONumber;
-        desc = item.Description;
-        serno = item.SerialNumber;
-        model = item.Model;
-        appby = item.AppliedBy;
-        cost = item.Cost;
-
-        if ( item.Acquired != null ) {
-          acquired = item.Acquired.ToString( "MM/dd/yyyy" );          
-        }
-
-        if ( item.AppliedByDate != null ) {
-          appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
-        }
-      }        
     }
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ){
       id = Request.QueryString["id"];
 
-      var db = Database.Open( appDatabaseName );
-      var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
-      var item = db.QuerySingle( selectItemCommand, id );
+      if ( !Request.QueryString["moveid"].IsEmpty() && Request.QueryString["moveid"].IsInt() ) {
+        moveid = Request.QueryString["moveid"];
 
-      if ( item != null ) {
-        tag = item.Tag;
-        po = item.PONumber;
-        desc = item.Description;
-        serno = item.SerialNumber;
-        model = item.Model;
-        appby = item.AppliedBy;
-        cost = item.Cost;
+        var selectMoveCommand = "SELECT * from Moves WHERE ID = @0";
+        var move = db.QuerySingle( selectMoveCommand, moveid );
 
-        if ( item.Acquired != null ) {
-          acquired = item.Acquired.ToString( "MM/dd/yyyy" );          
-        }
-
-        if ( item.AppliedByDate != null ) {
-          appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
-        }
-
-        if ( !Request.QueryString["moveid"].IsEmpty() && Request.QueryString["moveid"].IsInt() ) {
-          moveid = Request.QueryString["moveid"];
-
-          var selectMoveCommand = "SELECT * from Moves WHERE ID = @0";
-          var move = db.QuerySingle( selectMoveCommand, moveid );
-
-          if ( move != null ) {
-            if ( move.MoveDate != null ) {
-              movedate = move.MoveDate.ToString( "MM/dd/yyyy" );
-            }
-
-            location = move.Location;
-            assigned = move.AssignedTo;
-          } else {
-            Validation.AddFormError( "No Move was found with that ID");          
+        if ( move != null ) {
+          if ( move.MoveDate != null ) {
+            movedate = move.MoveDate.ToString( "MM/dd/yyyy" );
           }
+
+          location = move.Location;
+          assigned = move.AssignedTo;
         } else {
-          Validation.AddFormError( "No Move was found with that ID");
+          Validation.AddFormError( "No Move was found with that ID");          
         }
       } else {
-        Validation.AddFormError( "No Item was found with that ID" );
+        Validation.AddFormError( "No Move was found with that ID");
       }
     } else {
       Validation.AddFormError( "No Item was found with that ID" );
     }
-  }    
+  } 
+
+  var selectItemCommand = "SELECT * FROM Items WHERE ID = @0";
+  var item = db.QuerySingle( selectItemCommand, id );
+
+  if ( item != null ) {
+    tag = item.Tag;
+    po = item.PONumber;
+    desc = item.Description;
+    serno = item.SerialNumber;
+    model = item.Model;
+    appby = item.AppliedBy;
+    cost = item.Cost;
+
+    if ( item.Acquired != null ) {
+      acquired = item.Acquired.ToString( "MM/dd/yyyy" );          
+    }
+
+    if ( item.AppliedByDate != null ) {
+      appdate = item.AppliedByDate.ToString( "MM/dd/yyyy" );          
+    } else {
+      Validation.AddFormError( "No Item was found with that ID" );  
+    } 
+  }
 }
 
 <!-- <html> from layout -->

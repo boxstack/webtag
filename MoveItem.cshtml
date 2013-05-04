@@ -14,6 +14,8 @@
   var location = "";
   var assigned = "";
 
+  var db = Database.Open( appDatabaseName );
+
   if( IsPost ) {
     Validation.Add( "movedate",
       Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
@@ -35,7 +37,6 @@
     if ( !Request["buttonMove"].IsEmpty() && Validation.IsValid() ) {
       id = Request.Form["id"];
       
-      var db = Database.Open( appDatabaseName );
       var insertCommand = "INSERT INTO " +
                           "Moves (ItemID, MoveDate, Location, AssignedTo) " +
                           "VALUES (@0, @1, @2, @3)";
@@ -51,50 +52,34 @@
                                   @msgBody );
 *@
       Response.Redirect( "~/ViewItem?id=" + id );
-    } else {
-      var db = Database.Open( appDatabaseName );
-      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
-      var item = db.QuerySingle( dbCommand, id );
-
-      if ( item != null ) {
-        tag = item.Tag;
-        po = item.PONumber;
-        desc = item.Description;
-        serno = item.SerialNumber;
-        model = item.Model;
-        cost = item.Cost;
-
-        if ( item.Acquired != null ) {
-          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
-        }
-      }        
     }
   } else {
     if ( !Request.QueryString["id"].IsEmpty() && Request.QueryString["id"].IsInt() ) {
       id = Request.QueryString["id"];
+
       movedate = DateTime.Now.ToString( "MM/dd/yyyy" );
 
-      var db = Database.Open( appDatabaseName );
-      var dbCommand = "SELECT * FROM Items WHERE ID = @0";
-      var item = db.QuerySingle( dbCommand, id );
-
-      if ( item != null ) {
-        tag = item.Tag;
-        po = item.PONumber;
-        desc = item.Description;
-        serno = item.SerialNumber;
-        model = item.Model;
-        cost = item.Cost;
-
-        if ( item.Acquired != null ) {
-          acquired = item.Acquired.ToString( "MM/dd/yyyy" );
-        }
-      } else {
-        Validation.AddFormError( "No Item was found with that ID." );
-      }
     } else {
       Validation.AddFormError( "No Item was found with that ID." );
     }
+  }  
+  
+  var dbCommand = "SELECT * FROM Items WHERE ID = @0";
+  var item = db.QuerySingle( dbCommand, id );
+
+  if ( item != null ) {
+    tag = item.Tag;
+    po = item.PONumber;
+    desc = item.Description;
+    serno = item.SerialNumber;
+    model = item.Model;
+    cost = item.Cost;
+
+    if ( item.Acquired != null ) {
+      acquired = item.Acquired.ToString( "MM/dd/yyyy" );
+    }
+  } else {
+    Validation.AddFormError( "No Item was found with that ID." );
   }    
 }
 

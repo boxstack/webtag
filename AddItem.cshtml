@@ -33,12 +33,14 @@
       Validator.Required( "The item model is required" )
     );
     Validation.Add( "appdate",
+      Validator.Regex( "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2}|[0-9]{4})$" ),
       Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
     );
     Validation.Add( "cost",
       Validator.Decimal( "If provided, cost must be decimal" )
     );
     Validation.Add( "acquired",
+      Validator.Regex( "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2}|[0-9]{4})$" ),
       Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
     );
 

@@ -19,6 +19,8 @@
   if( IsPost ) {
     Validation.Add( "movedate",
       Validator.Required( "Please enter date formatted MM/DD/YYYY" ),
+      Validator.Regex( "^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2}|[0-9]{4})$",
+        "Please enter date formatted MM/DD/YYYY" ),
       Validator.DateTime( "Enter a valid date (MM/DD/YYYY)" )
     );
     Validation.Add( "location",

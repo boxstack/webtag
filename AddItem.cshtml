@@ -44,14 +44,14 @@
       Validator.DateTime( "If provided, date must be valid (MM/DD/YYYY)" )
     );
 
-    tag = Request.Form["tag"];
-    po = Request.Form["po"];
-    desc = Request.Form["desc"];
-    serno = Request.Form["serno"];
-    model = Request.Form["model"];
-    appby = Request.Form["appby"];
+    tag = Request.Form["tag"].ToUpper();
+    po = Request.Form["po"].ToUpper();
+    desc = Request.Form["desc"].ToUpper();
+    serno = Request.Form["serno"].ToUpper();
+    model = Request.Form["model"].ToUpper();
+    appby = Request.Form["appby"].ToUpper();
     appdate = Request.Form["appdate"];  
-    cost = Request.Form["cost"];
+    cost = Request.Form["cost"].ToUpper();
     acquired = Request.Form["acquired"];
 
     if ( !Request["buttonAdd"].IsEmpty() && Validation.IsValid() ) {

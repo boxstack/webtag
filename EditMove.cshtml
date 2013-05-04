@@ -34,11 +34,11 @@
 
   if( IsPost ) {   
     id = Request.Form["id"];
-
     moveid = Request.Form["moveid"];
+    
     movedate = Request.Form["movedate"];
-    location = Request.Form["location"];
-    assigned = Request.Form["assigned"];
+    location = Request.Form["location"].ToUpper();
+    assigned = Request.Form["assigned"].ToUpper();
 
     if ( !Request["buttonUpdate"].IsEmpty() && Validation.IsValid() ) {
       var updateCommand = "UPDATE Moves SET " +
